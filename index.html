@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
+    <script>
+        // Frame-busting protection to prevent clickjacking and malicious iframe embedding
+        if (window.top !== window.self) {
+            try {
+                window.top.location.replace(window.self.location.href);
+            } catch (e) {
+                document.documentElement.style.display = 'none';
+            }
+        }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>บริการให้เช่ารถเครน 24 ชม. | คลองสี่เครน</title>
@@ -49,6 +59,11 @@
             color: var(--text-light);
             line-height: 1.6;
             overflow-x: hidden;
+            /* Anti-copy selection */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         /* ลบสไตล์ลิ้งก์เริ่มต้น */
@@ -1652,6 +1667,7 @@
         <div class="footer-bottom">
             <p>&copy; 2026 คลองสี่เครน. All Rights Reserved. ออกแบบและพัฒนาเว็บบริการด้วยมาตรฐานระดับพรีเมียม</p>
             <p style="font-size: 0.8rem; color: var(--text-muted);">
+                <a href="Queue.html" style="margin-right: 15px; color: var(--primary);"><i class="fa-solid fa-user-gear"></i> สำหรับผู้รับจ้าง (ลงคิวงาน)</a> | 
                 <i class="fa-solid fa-shield-heart" style="color: var(--primary);"></i> ปลอดภัย 100% ตลอดการทำงาน
             </p>
         </div>
@@ -1786,6 +1802,63 @@
                 tableBody.appendChild(tr);
             });
         }
+
+        // ------------------ COPY & DEVTOOLS PROTECTION ------------------
+        (function initSecurity() {
+            // Disable right click
+            document.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+            });
+
+            // Disable drag and drop of elements
+            document.addEventListener('dragstart', (e) => {
+                e.preventDefault();
+            });
+
+            // Disable copy action
+            document.addEventListener('copy', (e) => {
+                e.preventDefault();
+            });
+
+            // Block developer tools and system shortcuts
+            document.addEventListener('keydown', (e) => {
+                // F12 key
+                if (e.key === 'F12' || e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C
+                if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Ctrl+U (view source)
+                if (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.keyCode === 85)) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Ctrl+S (save page)
+                if (e.ctrlKey && (e.key === 'S' || e.key === 's' || e.keyCode === 83)) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Ctrl+C (copy)
+                if (e.ctrlKey && (e.key === 'C' || e.key === 'c' || e.keyCode === 67)) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Ctrl+A (select all)
+                if (e.ctrlKey && (e.key === 'A' || e.key === 'a' || e.keyCode === 65)) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        })();
     </script>
 </body>
 </html>

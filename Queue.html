@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
+    <script>
+        // Frame-busting protection to prevent clickjacking and malicious iframe embedding
+        if (window.top !== window.self) {
+            try {
+                window.top.location.replace(window.self.location.href);
+            } catch (e) {
+                document.documentElement.style.display = 'none';
+            }
+        }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบจองคิวรถเครน | คลองสี่เครน</title>
@@ -44,6 +54,19 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            /* Anti-copy selection */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* Allow typing and selection in inputs */
+        input, textarea {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
         }
 
         /* Header */
@@ -636,13 +659,138 @@
             box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
         }
 
-        .modal-btn-danger:hover {
+        /* Lock Screen Styles */
+        .lock-screen-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0c0c0e;
+            background-image: radial-gradient(circle at 50% 50%, rgba(253, 184, 19, 0.08) 0%, transparent 60%);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
+
+        .lock-screen-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .lock-card {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(253, 184, 19, 0.25);
+            border-radius: 20px;
+            padding: 40px 30px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(253, 184, 19, 0.15);
+            transform: scale(1);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .lock-icon {
+            width: 70px;
+            height: 70px;
+            background-color: rgba(253, 184, 19, 0.1);
+            color: var(--primary);
+            font-size: 2.2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+            border: 1px solid rgba(253, 184, 19, 0.3);
+            box-shadow: 0 0 15px rgba(253, 184, 19, 0.1);
+        }
+
+        .lock-card h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            color: var(--text-light);
+        }
+
+        .lock-input {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px 15px;
+            color: white;
+            font-size: 1.05rem;
+            text-align: center;
+            letter-spacing: 2px;
+            margin-bottom: 18px;
+            transition: var(--transition-smooth);
+        }
+
+        .lock-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .lock-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), #ffa200);
+            color: var(--dark-bg);
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px var(--primary-glow);
+            transition: var(--transition-smooth);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .lock-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+            box-shadow: 0 6px 20px rgba(253, 184, 19, 0.5);
+        }
+
+        .lock-error-msg {
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            display: none;
         }
     </style>
 </head>
 <body>
+
+    <!-- Lock Screen Overlay -->
+    <div id="lockScreen" class="lock-screen-overlay">
+        <div class="lock-card">
+            <div class="lock-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h3>ระบบจองคิวรถเครน</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">เฉพาะผู้รับจ้างที่มีรหัสผ่านเข้าใช้งานเท่านั้น</p>
+            
+            <div id="lockError" class="lock-error-msg">❌ รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง</div>
+            
+            <input type="password" id="passcodeInput" class="lock-input" placeholder="กรอกรหัสผ่านเข้าใช้งาน" onkeydown="if(event.key === 'Enter') unlockPage()">
+            <button class="lock-btn" onclick="unlockPage()">
+                <i class="fa-solid fa-unlock-keyhole"></i> เข้าสู่ระบบ
+            </button>
+        </div>
+    </div>
 
     <!-- Header -->
     <header>
@@ -780,6 +928,180 @@
 
     <!-- JavaScript Logic -->
     <script>
+        // ------------------ SYSTEM PASSCODE PROTECTION ------------------
+        const PAGE_PASSCODE = "2111901"; // ** คุณสามารถเปลี่ยนรหัสผ่านตรงนี้ได้ตามต้องการ **
+        let loginAttempts = 0;
+        const MAX_ATTEMPTS = 5;
+        let cooldownInterval = null;
+
+        // Check for active lockout cooldown on startup
+        (function checkLockoutState() {
+            const lockoutUntil = localStorage.getItem('lockout_until');
+            if (lockoutUntil) {
+                const timeLeft = Math.ceil((parseInt(lockoutUntil) - Date.now()) / 1000);
+                if (timeLeft > 0) {
+                    document.addEventListener('DOMContentLoaded', () => {
+                        startCooldown(timeLeft);
+                    });
+                } else {
+                    localStorage.removeItem('lockout_until');
+                }
+            }
+        })();
+
+        function startCooldown(seconds) {
+            const input = document.getElementById('passcodeInput');
+            const submitBtn = document.querySelector('.lock-btn');
+            const errorMsg = document.getElementById('lockError');
+
+            if (!input || !submitBtn || !errorMsg) {
+                // Retry after load if DOM is not ready
+                document.addEventListener('DOMContentLoaded', () => startCooldown(seconds));
+                return;
+            }
+
+            input.disabled = true;
+            submitBtn.disabled = true;
+            input.placeholder = "ระบบระงับการกรอกชั่วคราว...";
+            
+            errorMsg.style.display = 'block';
+            errorMsg.style.backgroundColor = 'rgba(239, 68, 68, 0.15)';
+            errorMsg.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+            errorMsg.style.color = '#f87171';
+
+            let count = seconds;
+            
+            const updateMessage = () => {
+                errorMsg.innerHTML = `❌ กรอกรหัสผิดเกินกำหนด!<br>ระบบบล็อกชั่วคราวเพื่อความปลอดภัย กรุณารอ <strong>${count}</strong> วินาที`;
+                submitBtn.innerHTML = `<i class="fa-solid fa-hourglass-half"></i> กรุณารอ ${count} วินาที`;
+            };
+            
+            updateMessage();
+
+            if (cooldownInterval) clearInterval(cooldownInterval);
+            
+            cooldownInterval = setInterval(() => {
+                count--;
+                if (count <= 0) {
+                    clearInterval(cooldownInterval);
+                    cooldownInterval = null;
+                    
+                    input.disabled = false;
+                    submitBtn.disabled = false;
+                    input.placeholder = "กรอกรหัสผ่านเข้าใช้งาน";
+                    input.value = '';
+                    submitBtn.innerHTML = `<i class="fa-solid fa-unlock-keyhole"></i> เข้าสู่ระบบ`;
+                    errorMsg.style.display = 'none';
+                    
+                    localStorage.removeItem('lockout_until');
+                    loginAttempts = 0;
+                    input.focus();
+                } else {
+                    updateMessage();
+                }
+            }, 1000);
+        }
+
+        function unlockPage() {
+            const inputEl = document.getElementById('passcodeInput');
+            const input = inputEl.value;
+            const errorMsg = document.getElementById('lockError');
+            
+            const lockoutUntil = localStorage.getItem('lockout_until');
+            if (lockoutUntil && Date.now() < parseInt(lockoutUntil)) {
+                return;
+            }
+
+            if (input === PAGE_PASSCODE) {
+                // Correct passcode: Unlock in-memory only (does not persist in localStorage)
+                document.getElementById('lockScreen').classList.add('hidden');
+                loginAttempts = 0;
+            } else {
+                loginAttempts++;
+                inputEl.value = '';
+                inputEl.focus();
+
+                if (loginAttempts >= MAX_ATTEMPTS) {
+                    const cooldownTime = 60; // 60 seconds
+                    localStorage.setItem('lockout_until', (Date.now() + cooldownTime * 1000).toString());
+                    startCooldown(cooldownTime);
+                } else {
+                    errorMsg.style.display = 'block';
+                    errorMsg.innerHTML = `❌ รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง<br><span style="font-size: 0.8rem; opacity: 0.8;">(กรอกผิดได้อีก ${MAX_ATTEMPTS - loginAttempts} ครั้งก่อนระบบจะบล็อก)</span>`;
+                }
+            }
+        }
+
+        // ------------------ COPY & DEVTOOLS PROTECTION ------------------
+        (function initSecurity() {
+            // Disable right click
+            document.addEventListener('contextmenu', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    return;
+                }
+                e.preventDefault();
+            });
+
+            // Disable drag and drop of elements
+            document.addEventListener('dragstart', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    return;
+                }
+                e.preventDefault();
+            });
+
+            // Disable copy action
+            document.addEventListener('copy', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    return;
+                }
+                e.preventDefault();
+            });
+
+            // Block developer tools and system shortcuts
+            document.addEventListener('keydown', (e) => {
+                // F12 key
+                if (e.key === 'F12' || e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C
+                if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Ctrl+U (view source)
+                if (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.keyCode === 85)) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Ctrl+S (save page)
+                if (e.ctrlKey && (e.key === 'S' || e.key === 's' || e.keyCode === 83)) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Ctrl+C (copy) - Allow inside input fields only
+                if (e.ctrlKey && (e.key === 'C' || e.key === 'c' || e.keyCode === 67)) {
+                    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+
+                // Ctrl+A (select all) - Allow inside input fields only
+                if (e.ctrlKey && (e.key === 'A' || e.key === 'a' || e.keyCode === 65)) {
+                    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+            });
+        })();
+        // ----------------------------------------------------------------
         // Global variables - Hardcoded URL
         const scriptUrl = 'https://script.google.com/macros/s/AKfycbyOY2Wjjey8l0XOorX9aeTP9Nu3YXHtXMWZnY5z_HqTvi7jaq3LRzACT9ksemTTHvII/exec';
         let bookingsList = [];
