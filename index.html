@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บริการให้เช่ารถเครน 24 ชม. | คลองสี่เครน</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Prompt & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* =========================================
+           ระบบตัวแปร (Design System Tokens)
+        ========================================= */
+        :root {
+            --primary: #fdb813; /* เหลืองอุตสาหกรรมทอง */
+            --primary-hover: #ffcc00;
+            --primary-glow: rgba(253, 184, 19, 0.35);
+            --dark-bg: #0c0c0e; /* ดำคาร์บอนลึก */
+            --card-bg: #16161b; /* เทาเข้มของแผ่นเหล็ก */
+            --card-hover: #1e1e24;
+            --accent-red: #ff3e3e;
+            --accent-red-glow: rgba(255, 62, 62, 0.4);
+            --text-light: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: rgba(255, 255, 255, 0.07);
+            --font-main: 'Prompt', 'Inter', -apple-system, sans-serif;
+            --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --shadow-premium: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+            --shadow-glow: 0 0 20px rgba(253, 184, 19, 0.15);
+        }
+
+        /* การตั้งค่าพื้นฐาน */
+        * {
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ลบสไตล์ลิ้งก์เริ่มต้น */
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* ตกแต่ง Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2b2b35;
+            border-radius: 5px;
+            border: 2px solid var(--dark-bg);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* =========================================
+           ลูกเล่นอนิเมชันตอนโหลดหน้าเว็บ (Reveal Animation)
+        ========================================= */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.reveal-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* อนิเมชันเฉพาะทาง */
+        .slide-left {
+            opacity: 0;
+            transform: translateX(-40px);
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .slide-left.reveal-visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide-right {
+            opacity: 0;
+            transform: translateX(40px);
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .slide-right.reveal-visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* =========================================
+           แถบเมนูด้านบน (Dynamic Premium Header)
+        ========================================= */
+        header {
+            background-color: rgba(12, 12, 14, 0.8);
+            color: var(--text-light);
+            padding: 15px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border-color);
+            transition: var(--transition-smooth);
+        }
+
+        header.scrolled {
+            padding: 10px 6%;
+            background-color: rgba(12, 12, 14, 0.95);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid rgba(253, 184, 19, 0.25);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-container img {
+            height: 52px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+            transition: var(--transition-bounce);
+        }
+
+        .logo-container img:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-text h2 {
+            font-size: 1.15rem;
+            margin: 0;
+            color: var(--text-light);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            border: none;
+            padding: 0;
+        }
+
+        .logo-text span {
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        nav a {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: var(--transition-smooth);
+            position: relative;
+            padding: 5px 0;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: var(--transition-smooth);
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* ปุ่มติดต่อใน Nav */
+        .nav-cta {
+            background: linear-gradient(135deg, var(--primary), #ffa200);
+            color: var(--dark-bg);
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(253, 184, 19, 0.25);
+            transition: var(--transition-bounce);
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(253, 184, 19, 0.4);
+            color: var(--dark-bg);
+        }
+
+        /* เมนูลอยตัวบนหน้าจอมือถือ */
+        .mobile-menu-btn {
+            display: none;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+        }
+
+        /* =========================================
+           ปุ่มโซเชียลมีเดียด้านซ้าย (Floating Social Bar)
+        ========================================= */
+        .floating-social {
+            position: fixed;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 9999;
+        }
+
+        .social-btn {
+            width: 54px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            color: white;
+            border-radius: 0 30px 30px 0;
+            transition: var(--transition-bounce);
+            box-shadow: 4px 4px 15px rgba(0,0,0,0.4);
+            overflow: hidden;
+            padding-left: 16px;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .social-btn i {
+            font-size: 22px;
+            min-width: 24px;
+            transition: var(--transition-smooth);
+        }
+
+        .social-btn span {
+            font-size: 0.85rem;
+            font-weight: 600;
+            opacity: 0;
+            margin-left: 15px;
+            transform: translateX(-15px);
+            transition: var(--transition-smooth);
+        }
+
+        /* เอฟเฟกต์ตอน Hover ยืดออกพร้อมโชว์ข้อความอย่างหรูหรา */
+        .social-btn:hover {
+            width: 150px;
+            padding-left: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+
+        .social-btn:hover i {
+            transform: scale(1.15) rotate(5deg);
+        }
+
+        .social-btn:hover span {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* สีพรีเมียมเฉพาะของแต่ละแอป */
+        .facebook { 
+            background: linear-gradient(135deg, #1877F2, #0d5ad1); 
+            border-right: 2px solid rgba(255,255,255,0.2);
+        }
+        .facebook:hover {
+            box-shadow: 0 0 20px rgba(24, 119, 242, 0.45);
+        }
+
+        .line { 
+            background: linear-gradient(135deg, #00C300, #009900); 
+            border-right: 2px solid rgba(255,255,255,0.2);
+        }
+        .line:hover {
+            box-shadow: 0 0 20px rgba(0, 195, 0, 0.45);
+        }
+
+        .tiktok { 
+            background: linear-gradient(135deg, #000000, #25f4ee); 
+            border-right: 2px solid rgba(255,255,255,0.3);
+        }
+        .tiktok:hover {
+            box-shadow: 0 0 20px rgba(37, 244, 238, 0.35);
+        }
+
+        /* =========================================
+           ส่วนแบนเนอร์หลัก (Hero Showcase Section)
+        ========================================= */
+        .hero {
+            position: relative;
+            background: linear-gradient(180deg, rgba(12, 12, 14, 0.2) 0%, rgba(12, 12, 14, 1) 95%), 
+                        radial-gradient(circle at 70% 30%, rgba(253, 184, 19, 0.12) 0%, transparent 60%),
+                        #121214;
+            color: white;
+            text-align: center;
+            padding: 130px 20px 100px 20px;
+            overflow: hidden;
+        }
+
+        /* พื้นหลังกริดเหล็กอุตสาหกรรมใน CSS */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px), 
+                              linear-gradient(90deg, rgba(255,255,255,0.01) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* วงแหวนเรืองแสงสีทอง */
+        .hero-glow {
+            position: absolute;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(253, 184, 19, 0.08) 0%, transparent 70%);
+            filter: blur(50px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            background-color: rgba(253, 184, 19, 0.1);
+            border: 1px solid rgba(253, 184, 19, 0.3);
+            color: var(--primary);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            box-shadow: inset 0 0 10px rgba(253, 184, 19, 0.05);
+            animation: pulse-border 2s infinite alternate;
+        }
+
+        @keyframes pulse-border {
+            0% { border-color: rgba(253, 184, 19, 0.3); }
+            100% { border-color: rgba(253, 184, 19, 0.7); box-shadow: 0 0 15px rgba(253, 184, 19, 0.2); }
+        }
+
+        .hero h1 {
+            font-size: 3.25rem;
+            font-weight: 800;
+            line-height: 1.25;
+            margin: 0 0 20px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .hero h1 span.gradient-text {
+            background: linear-gradient(135deg, var(--primary) 30%, #ffd066 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin: 0 auto 35px auto;
+            max-width: 650px;
+            font-weight: 400;
+        }
+
+        /* กลุ่มปุ่ม Hero */
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #ffa200);
+            color: var(--dark-bg);
+            padding: 15px 32px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            box-shadow: 0 4px 20px var(--primary-glow);
+            transition: var(--transition-bounce);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* เอฟเฟกต์แสงวิ่งผ่านปุ่ม (Shine Effect) */
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -50%;
+            width: 30%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.35), transparent);
+            transform: skewX(-25deg);
+            transition: 0.75s;
+        }
+
+        .btn-primary:hover::after {
+            left: 150%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(253, 184, 19, 0.5);
+            color: var(--dark-bg);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-light);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            padding: 13px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* =========================================
+           ส่วนเนื้อหา (Section Base & Structure)
+        ========================================= */
+        section {
+            padding: 90px 6%;
+            max-width: 1200px;
+            margin: auto;
+            background: var(--card-bg);
+            margin-bottom: 50px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-premium);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* แถบสีตกแต่งตรงขอบ Section */
+        section::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+            opacity: 0.8;
+        }
+
+        .section-header {
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        h2 {
+            color: var(--text-light);
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 0 0 15px 0;
+            display: inline-block;
+            position: relative;
+        }
+
+        h2 span.highlight {
+            color: var(--primary);
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1rem;
+        }
+
+        /* =========================================
+           ข้อมูลตัวรถ (Interactive Vehicle Cards)
+        ========================================= */
+        .vehicle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .vehicle-card {
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 35px 30px;
+            transition: var(--transition-bounce);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vehicle-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 100% 0%, rgba(253, 184, 19, 0.05) 0%, transparent 60%);
+            pointer-events: none;
+            opacity: 0;
+            transition: var(--transition-smooth);
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(253, 184, 19, 0.35);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), var(--shadow-glow);
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .vehicle-card:hover::before {
+            opacity: 1;
+        }
+
+        .vehicle-icon {
+            width: 64px;
+            height: 64px;
+            background-color: rgba(253, 184, 19, 0.1);
+            color: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin-bottom: 25px;
+            border: 1px solid rgba(253, 184, 19, 0.2);
+            transition: var(--transition-bounce);
+        }
+
+        .vehicle-card:hover .vehicle-icon {
+            background-color: var(--primary);
+            color: var(--dark-bg);
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .vehicle-card h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0 0 15px 0;
+            color: var(--text-light);
+        }
+
+        .vehicle-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin: 0 0 20px 0;
+            line-height: 1.6;
+        }
+
+        .vehicle-specs {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .vehicle-specs li {
+            font-size: 0.95rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            color: #d1d5db;
+            line-height: 1.5;
+        }
+
+        .vehicle-specs li i {
+            color: var(--primary);
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        /* กล่องไฮไลต์การรับรองมาตรฐาน ปจ.2 */
+        .cert-card {
+            grid-column: 1 / -1;
+            background: linear-gradient(90deg, rgba(253, 184, 19, 0.05), transparent);
+            border: 1px dashed rgba(253, 184, 19, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .cert-badge {
+            font-size: 2.2rem;
+            color: var(--primary);
+            text-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .cert-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .cert-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* =========================================
+           ตารางราคาบริการ (Premium Pricing Cards)
+        ========================================= */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 30px;
+            align-items: stretch;
+        }
+
+        .pricing-card {
+            background-color: rgba(255, 255, 255, 0.015);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: var(--transition-bounce);
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+
+        /* การ์ดแนะนำยอดฮิต */
+        .pricing-card.featured {
+            background-color: rgba(253, 184, 19, 0.02);
+            border: 2px solid var(--primary);
+            box-shadow: var(--shadow-glow);
+            transform: scale(1.03);
+        }
+
+        .pricing-card.featured:hover {
+            transform: translateY(-8px) scale(1.04);
+            box-shadow: 0 20px 40px rgba(253, 184, 19, 0.12), var(--shadow-glow);
+        }
+
+        .featured-tag {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary), #ffa200);
+            color: var(--dark-bg);
+            padding: 4px 16px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(253, 184, 19, 0.3);
+        }
+
+        .pricing-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin: 0 0 15px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pricing-card.featured .pricing-header h3 {
+            color: var(--primary);
+        }
+
+        .pricing-price {
+            margin-bottom: 25px;
+        }
+
+        .price-num {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-light);
+        }
+
+        .price-num span {
+            color: var(--primary);
+        }
+
+        .price-unit {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            display: block;
+            margin-top: 5px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 35px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            text-align: left;
+            border-top: 1px solid var(--border-color);
+            padding-top: 25px;
+        }
+
+        .pricing-features li {
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #d1d5db;
+        }
+
+        .pricing-features li i {
+            font-size: 1rem;
+            min-width: 16px;
+        }
+
+        .pricing-features li i.fa-check-circle {
+            color: #10b981;
+        }
+
+        .pricing-features li i.fa-info-circle {
+            color: var(--primary);
+        }
+
+        .pricing-cta {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .pricing-card .pricing-cta {
+            background-color: rgba(255,255,255,0.05);
+            color: var(--text-light);
+            border: 1px solid var(--border-color);
+        }
+
+        .pricing-card .pricing-cta:hover {
+            background-color: var(--text-light);
+            color: var(--dark-bg);
+            transform: translateY(-2px);
+        }
+
+        .pricing-card.featured .pricing-cta {
+            background: linear-gradient(135deg, var(--primary), #ffa200);
+            color: var(--dark-bg);
+            border: none;
+            box-shadow: 0 4px 15px rgba(253, 184, 19, 0.2);
+        }
+
+        .pricing-card.featured .pricing-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(253, 184, 19, 0.4);
+        }
+
+        /* =========================================
+           ส่วนตารางคิวงาน (Live Schedule Section)
+        ========================================= */
+        .schedule-card {
+            border: 1px solid var(--border-color);
+            background-color: rgba(255,255,255,0.01);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+        }
+
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            border: none;
+            overflow: hidden;
+        }
+
+        .iframe-container iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+            /* ปรับแต่ง iframe ให้กลมกลืนกับธีมมืด */
+            filter: invert(0.9) hue-rotate(180deg) contrast(1.1);
+            opacity: 0.85;
+            transition: var(--transition-smooth);
+        }
+
+        .iframe-container iframe:hover {
+            opacity: 1;
+        }
+
+        /* =========================================
+           แกลลอรี่ผลงาน (Media & Works Gallery)
+        ========================================= */
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+            gap: 25px;
+        }
+
+        .media-wrapper {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-premium);
+            border: 1px solid var(--border-color);
+            aspect-ratio: 4/3;
+        }
+
+        .media-item {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* โอเวอร์เลย์ตกแต่งของรูปภาพผลงาน */
+        .media-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, transparent 50%, rgba(12, 12, 14, 0.9) 100%);
+            display: flex;
+            align-items: flex-end;
+            padding: 25px;
+            opacity: 0;
+            transition: var(--transition-smooth);
+            z-index: 2;
+        }
+
+        .media-overlay-content {
+            transform: translateY(15px);
+            transition: var(--transition-smooth);
+        }
+
+        .media-overlay-content h4 {
+            margin: 0 0 5px 0;
+            color: var(--text-light);
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
+
+        .media-overlay-content p {
+            margin: 0;
+            color: var(--primary);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .media-wrapper:hover .media-item {
+            transform: scale(1.1);
+        }
+
+        .media-wrapper:hover .media-overlay {
+            opacity: 1;
+        }
+
+        .media-wrapper:hover .media-overlay-content {
+            transform: translateY(0);
+        }
+
+        /* ตกแต่งส่วน Video */
+        .video-wrapper {
+            aspect-ratio: 4/3;
+            background-color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-item {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: none;
+        }
+
+        /* =========================================
+           ติดต่อเรา / ท้ายเว็บ (Premium Footer)
+        ========================================= */
+        footer {
+            background-color: #08080a;
+            color: var(--text-light);
+            padding: 80px 6% 40px 6%;
+            border-top: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 50px;
+            max-width: 1200px;
+            margin: 0 auto 50px auto;
+        }
+
+        .footer-brand h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            color: var(--text-light);
+        }
+
+        .footer-brand h3 span {
+            color: var(--primary);
+        }
+
+        .footer-brand p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            max-width: 320px;
+        }
+
+        /* แถบลิ้งก์ด่วน */
+        .footer-links h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0 0 20px 0;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-links ul li a {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            transition: var(--transition-smooth);
+        }
+
+        .footer-links ul li a:hover {
+            color: var(--primary);
+            padding-left: 5px;
+        }
+
+        /* ข้อมูลติดต่อใน Footer */
+        .footer-contact h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0 0 20px 0;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .contact-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .contact-icon {
+            width: 36px;
+            height: 36px;
+            background-color: rgba(253, 184, 19, 0.1);
+            color: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            margin-top: 3px;
+        }
+
+        .contact-text p {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .contact-text strong {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .contact-text a {
+            transition: var(--transition-smooth);
+        }
+
+        .contact-text a:hover {
+            color: var(--primary);
+        }
+
+        /* ส่วนลิขสิทธิ์ท้ายเว็บ */
+        .footer-bottom {
+            border-top: 1px solid var(--border-color);
+            padding-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-bottom p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-link {
+            width: 38px;
+            height: 38px;
+            background-color: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: var(--transition-bounce);
+        }
+
+        .social-link:hover {
+            transform: translateY(-3px);
+            background-color: var(--primary);
+            color: var(--dark-bg);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        /* =========================================
+           ปุ่มโทรด่วนลอยน้ำ (Floating Quick Contact Button)
+        ========================================= */
+        .quick-call-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+            z-index: 999;
+            transition: var(--transition-bounce);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .quick-call-btn i {
+            font-size: 1.25rem;
+            animation: phone-shake 1.5s infinite;
+        }
+
+        @keyframes phone-shake {
+            0%, 100% { transform: rotate(0); }
+            10%, 30%, 50%, 70%, 90% { transform: rotate(-10deg); }
+            20%, 40%, 60%, 80% { transform: rotate(10deg); }
+        }
+
+        .quick-call-btn:hover {
+            transform: scale(1.05) translateY(-3px);
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.6);
+            color: white;
+        }
+
+        /* =========================================
+           ระบบตารางคิวงานอัปเดตเรียลไทม์ (Live Schedule Table)
+        ========================================= */
+        .table-container {
+            max-height: 480px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background-color: rgba(0, 0, 0, 0.15);
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 1rem;
+        }
+
+        th {
+            background-color: rgba(255, 255, 255, 0.03);
+            border-bottom: 2px solid rgba(253, 184, 19, 0.2);
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            color: var(--text-light);
+            vertical-align: middle;
+        }
+
+        /* กำหนดสัดส่วนคอลัมน์ให้สมดุล */
+        th:nth-child(1), td:nth-child(1) {
+            width: 45%;
+        }
+        th:nth-child(2), td:nth-child(2) {
+            width: 30%;
+            white-space: nowrap;
+        }
+        th:nth-child(3), td:nth-child(3) {
+            width: 25%;
+            white-space: nowrap;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.01);
+        }
+
+        .badge-16 {
+            background-color: rgba(253, 184, 19, 0.1);
+            border: 1px solid rgba(253, 184, 19, 0.3);
+            color: var(--primary);
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            white-space: nowrap;
+            display: inline-block;
+            box-shadow: 0 2px 8px rgba(253, 184, 19, 0.05);
+        }
+
+        .badge-25 {
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            white-space: nowrap;
+            display: inline-block;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.05);
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 0.95rem;
+        }
+
+        /* =========================================
+           Responsive Design (ปรับแต่งขนาดตามอุปกรณ์)
+        ========================================= */
+        @media (max-width: 991px) {
+            header {
+                padding: 15px 4%;
+            }
+            header.scrolled {
+                padding: 10px 4%;
+            }
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            section {
+                padding: 60px 4%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            nav {
+                display: none; /* สำหรับโปรเจกต์ขนาดเล็ก เราย้ายการติดต่อมาที่ปุ่มลอยตัว */
+            }
+
+            .hero h1 {
+                font-size: 2.1rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+            
+            .pricing-card.featured:hover {
+                transform: translateY(-8px);
+            }
+
+            .featured-tag {
+                top: -12px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .quick-call-btn {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+
+            .floating-social {
+                display: none; /* ซ่อนแถบโซเชียลด้านซ้ายบนมือถือเพื่อลดการบดบังเนื้อหา */
+            }
+
+            .table-container {
+                max-height: 350px; /* ปรับความสูงตารางบนมือถือ */
+            }
+
+            th, td {
+                padding: 12px 10px; /* ลด Padding บนมือถือ */
+                font-size: 0.85rem; /* ลดขนาดฟอนต์บนมือถือ */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ปุ่มโซเชียลมีเดียด้านซ้าย (Floating Social Bar) -->
+    <div class="floating-social">
+        <a href="https://www.facebook.com/share/18meTK2SGe/" class="social-btn facebook" target="_blank" title="ติดต่อทาง Facebook">
+            <i class="fab fa-facebook-f"></i>
+            <span>Facebook</span>
+        </a>
+        
+        <a href="https://line.me/ti/p/Qo4nIN0yg_" class="social-btn line" target="_blank" title="ติดต่อทาง Line">
+            <i class="fab fa-line"></i>
+            <span>Line Chat</span>
+        </a>
+        
+        <a href="https://www.tiktok.com/@aom.yukham2526?_r=1&_t=ZS-96mmsRfXlmC" class="social-btn tiktok" target="_blank" title="ติดตามทาง TikTok">
+            <i class="fab fa-tiktok"></i>
+            <span>TikTok</span>
+        </a>
+    </div>
+
+    <!-- แถบเมนูบน (Header) -->
+    <header id="header">
+        <div class="logo-container">
+            <img src="Logo.jpg" alt="คลองสี่เครน โลโก้">
+            <div class="logo-text">
+                <h2>คลองสี่เครน</h2>
+                <span>บริการรถเครน 24 ชั่วโมง</span>
+            </div>
+        </div>
+        <nav>
+            <a href="#about"><i class="fa-solid fa-truck-moving"></i> ข้อมูลรถ</a>
+            <a href="#pricing"><i class="fa-solid fa-tags"></i> ค่าบริการ</a>
+            <a href="#schedule"><i class="fa-solid fa-calendar-days"></i> คิวงาน</a>
+            <a href="#media"><i class="fa-solid fa-images"></i> ผลงาน</a>
+            <a href="#contact" class="nav-cta"><i class="fa-solid fa-phone"></i> ติดต่อจองคิว</a>
+        </nav>
+        <button class="mobile-menu-btn" onclick="document.getElementById('contact').scrollIntoView();" title="ติดต่อเรา">
+            <i class="fa-solid fa-phone-volume" style="color: var(--primary);"></i>
+        </button>
+    </header>
+
+    <!-- ส่วนแบนเนอร์หลัก (Hero Showcase) -->
+    <div class="hero">
+        <div class="hero-glow"></div>
+        <div class="hero-content reveal">
+            <div class="hero-badge">
+                <i class="fa-solid fa-shield-halved"></i> บริการด่วน 24 ชั่วโมง ปลอดภัย 100%
+            </div>
+            <h1>
+                บริการให้เช่ารถเครน <br>
+                <span class="gradient-text">พร้อมคนขับมืออาชีพ</span>
+            </h1>
+            <p>บริการยกย้ายเครื่องจักรหนัก งานก่อสร้าง ยกโครงสร้างหลังคาเหล็ก แผ่นพื้น คอนกรีต ทำงานตรงเวลา ปลอดภัย มีใบ ปจ.2 และใบเซอร์รับรองคนขับ</p>
+            <div class="hero-buttons">
+                <a href="#contact" class="btn-primary">
+                    <i class="fa-solid fa-calendar-check"></i> จองคิวรถเครนเลย
+                </a>
+                <a href="#about" class="btn-secondary">
+                    <i class="fa-solid fa-circle-info"></i> ดูข้อมูลรถ & บริการ
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ข้อมูลรถและขอบเขตงานที่รับ (Vehicle Info Section) -->
+    <section id="about">
+        <div class="section-header reveal">
+            <h2>ข้อมูลตัวรถ <span class="highlight">& ขอบเขตงาน</span></h2>
+            <p>เราเตรียมความพร้อมของเครื่องจักรและบุคลากรเพื่อรองรับงานทุกประเภทของท่านอย่างมืออาชีพ</p>
+        </div>
+        
+        <div class="vehicle-grid">
+            <!-- รถเครน 16 ตัน -->
+            <div class="vehicle-card reveal slide-left">
+                <div class="vehicle-icon">
+                    <i class="fa-solid fa-truck-ramp-box"></i>
+                </div>
+                <h3>รถเครนขนาด 16 ตัน</h3>
+                <p>ขนาดกะทัดรัด คล่องตัวสูงมาก เหมาะเป็นพิเศษสำหรับพื้นที่จำกัด ตรอกซอกซอยแคบ หรือหมู่บ้านจัดสรรที่รถขนาดใหญ่เข้ายาก</p>
+                <ul class="vehicle-specs">
+                    <li><i class="fa-solid fa-circle-check"></i> <span><strong>ขอบเขตงาน:</strong> ยกเสาเข็มไอ, ติดตั้งแผ่นพื้นคอนกรีตสำเร็จรูป, ยกแผ่นเมทัลชีท</span></li>
+                    <li><i class="fa-solid fa-circle-check"></i> <span><strong>งานจัดสวน:</strong> ยกย้ายและปลูกต้นไม้ใหญ่ ตกแต่งสวนตามบ้านพักอาศัย</span></li>
+                    <li><i class="fa-solid fa-circle-check"></i> <span><strong>ความเหมาะสม:</strong> โครงหลังคาบ้านพัก, ยกวัสดุก่อสร้างขึ้นชั้น 2-3, ตู้คอนเทนเนอร์ขนาดเล็ก</span></li>
+                </ul>
+            </div>
+
+            <!-- รถเครน 25 ตัน -->
+            <div class="vehicle-card reveal slide-right">
+                <div class="vehicle-icon">
+                    <i class="fa-solid fa-truck-moving"></i>
+                </div>
+                <h3>รถเครนขนาด 25 ตัน</h3>
+                <p>ขนาดมาตรฐานยอดนิยม กำลังยกสูงและยืดบูมได้ไกล มีความเสถียรเป็นเลิศ เหมาะสำหรับงานอุตสาหกรรมและโครงการก่อสร้างทั่วไป</p>
+                <ul class="vehicle-specs">
+                    <li><i class="fa-solid fa-circle-check"></i> <span><strong>งานโครงสร้าง:</strong> ติดตั้งโครงหลังคาโกดังโรงงานขนาดใหญ่, ยกแผ่นพื้นโครงสร้างปูนหนัก</span></li>
+                    <li><i class="fa-solid fa-circle-check"></i> <span><strong>งานอุตสาหกรรม:</strong> ยกย้าย ย้ายตำแหน่ง หรือติดตั้งเครื่องจักรหนักภายในโรงงาน</span></li>
+                    <li><i class="fa-solid fa-circle-check"></i> <span><strong>การใช้งานอื่น ๆ:</strong> ยกตู้คอนเทนเนอร์ขนาด 20 ฟุต, เทคอนกรีตด้วยพ็อกเก็ต (Bucket), งานกู้ภัยยกรถอุบัติเหตุ</span></li>
+                </ul>
+            </div>
+
+            <!-- ใบ ปจ.2 & ใบเซอร์รับรอง -->
+            <div class="cert-card reveal">
+                <div class="cert-badge">
+                    <i class="fa-solid fa-file-shield"></i>
+                </div>
+                <div class="cert-info">
+                    <h4>ความปลอดภัยมาตรฐานสูงสุด (100% Safety Certified)</h4>
+                    <p>รถเครนทุกคันผ่านการตรวจเช็กสภาพและได้รับใบอนุญาต <strong>ปจ.2</strong> อย่างถูกต้องตามกฎหมาย และพนักงานขับรถเครนทุกคนผ่านการอบรมหลักสูตรควบคุมรถเครนอย่างปลอดภัยและมี <strong>ใบเซอร์ (Certificate)</strong> รับประกันฝีมือการทำงานทุกคน</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ช่องทางการติดต่อและแพ็กเกจการเช่า (Contact & Rental Packages Section) -->
+    <section id="pricing">
+        <div class="section-header reveal">
+            <h2>จองคิวและ <span class="highlight">ประเมินราคาฟรี</span></h2>
+            <p>เลือกรูปแบบการเช่ารถเครนที่เหมาะสมกับงานของคุณ และติดต่อเราเพื่อประเมินราคาที่ดีที่สุดได้ตลอด 24 ชั่วโมง</p>
+        </div>
+
+        <div class="pricing-grid">
+            <!-- เช่าครึ่งวัน -->
+            <div class="pricing-card reveal">
+                <div class="pricing-header">
+                    <h3>เช่าครึ่งวัน (Half Day)</h3>
+                    <div style="margin: 20px 0;">
+                        <a href="https://www.facebook.com/share/18meTK2SGe/" target="_blank" class="pricing-cta" style="background: linear-gradient(135deg, #1877F2, #0d5ad1); color: white; border: none; font-size: 1rem; padding: 14px 20px; box-shadow: 0 4px 15px rgba(24, 119, 242, 0.3); border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; font-weight: 700; transition: var(--transition-smooth);">
+                            <i class="fab fa-facebook-messenger" style="font-size: 1.2rem;"></i> ทักแชท Facebook ทันที
+                        </a>
+                    </div>
+                </div>
+                <ul class="pricing-features" style="border-top: 1px solid var(--border-color); padding-top: 20px;">
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> เลือกรอบการยกได้ (เช้า 4 ชม. / บ่าย 4 ชม.)</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> รอบเช้า: 08:00 - 12:00 น. / รอบบ่าย: 13:00 - 17:00 น.</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> รวมบริการรถเครน คนขับ และค่าน้ำมันเรียบร้อย</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> ประเมินราคาตามขนาดรถ 16 ตัน หรือ 25 ตัน</li>
+                    <li><i class="fa-solid fa-info-circle" style="color: var(--primary);"></i> เหมาะสำหรับงานยกชิ้นงานปริมาณน้อยหรือระยะเวลาสั้น</li>
+                </ul>
+                <a href="tel:0829924617" class="pricing-cta"><i class="fa-solid fa-phone"></i> โทรติดต่อ: 082-992-4617</a>
+            </div>
+
+            <!-- เช่าเต็มวัน - เด่นพิเศษ -->
+            <div class="pricing-card featured reveal">
+                <div class="featured-tag">คุ้มค่าที่สุด</div>
+                <div class="pricing-header">
+                    <h3>เช่าเต็มวัน (Full Day)</h3>
+                    <div style="margin: 20px 0;">
+                        <a href="tel:0829924617" class="pricing-cta" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; font-size: 1rem; padding: 14px 20px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; font-weight: 700; transition: var(--transition-smooth);">
+                            <i class="fa-solid fa-phone-volume" style="font-size: 1.1rem; animation: phone-shake 1.5s infinite;"></i> โทรติดต่อด่วนทันที
+                        </a>
+                    </div>
+                </div>
+                <ul class="pricing-features" style="border-top: 1px solid var(--border-color); padding-top: 20px;">
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> เวลาทำแบบจุใจ 8 ชั่วโมง (08:00 - 17:00 น.)</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> รวมคนขับพร้อมค่าน้ำมันสำหรับการปฏิบัติงาน</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> เลือกใช้งานรถเครนขนาด 16 ตัน หรือ 25 ตัน ได้ตามความเหมาะสม</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> ฟรี! บริการให้คำปรึกษาและช่วยประเมินการใช้รถหน้างาน</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> เหมาะสำหรับงานไซต์ก่อสร้างที่ต้องยกย้ายของตลอดทั้งวัน</li>
+                </ul>
+                <a href="https://www.facebook.com/share/18meTK2SGe/" target="_blank" class="pricing-cta" style="background: linear-gradient(135deg, var(--primary), #ffa200); color: var(--dark-bg);"><i class="fab fa-facebook-f"></i> ทักแชท Facebook Page</a>
+            </div>
+
+            <!-- งานเหมา / ล่วงเวลา -->
+            <div class="pricing-card reveal">
+                <div class="pricing-header">
+                    <h3>รายเดือน / งานเหมา / OT</h3>
+                    <div style="margin: 20px 0;">
+                        <a href="https://line.me/ti/p/Qo4nIN0yg_" target="_blank" class="pricing-cta" style="background: linear-gradient(135deg, #00C300, #009900); color: white; border: none; font-size: 1rem; padding: 14px 20px; box-shadow: 0 4px 15px rgba(0, 195, 0, 0.3); border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; font-weight: 700; transition: var(--transition-smooth);">
+                            <i class="fab fa-line" style="font-size: 1.3rem;"></i> แอดไลน์เพื่อส่งประเมินราคา
+                        </a>
+                    </div>
+                </div>
+                <ul class="pricing-features" style="border-top: 1px solid var(--border-color); padding-top: 20px;">
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> คิดค่าล่วงเวลา (OT) ตามขนาดรถเครนและขอบเขตงานจริง</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> งานเหมาโครงสร้างหรือโปรเจกต์ใหญ่ ประเมินราคาฟรีไม่มีค่าใช้จ่าย</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> มีข้อเสนอราคาพิเศษสำหรับการเช่ารายเดือนหรือระยะยาว</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> ออกใบเสนอราคา (Quotation) และใบเสร็จรับเงินอย่างถูกต้อง</li>
+                    <li><i class="fa-solid fa-info-circle" style="color: var(--primary);"></i> ทีมงานยินดีให้คำปรึกษาเพื่อวางแผนบริหารงบประมาณ</li>
+                </ul>
+                <a href="tel:0829924617" class="pricing-cta"><i class="fa-solid fa-phone"></i> โทรติดต่อ: 082-992-4617</a>
+            </div>
+        </div>
+    </section>    <!-- ตารางคิวงาน (Schedule Section) -->
+    <section id="schedule">
+        <div class="section-header reveal">
+            <h2>ตารางคิวงาน <span class="highlight">อัปเดตเรียลไทม์</span></h2>
+            <p>ตรวจสอบวันและเวลาที่ว่างเพื่อจองคิวล่วงหน้าได้อย่างง่ายดายผ่านตารางออนไลน์ของเรา</p>
+        </div>
+        
+        <div class="schedule-card reveal" style="padding: 25px; border: 1px solid var(--border-color); background-color: rgba(255,255,255,0.01); border-radius: 12px; overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,0.2);">
+            <div class="table-container">
+                <table id="mainBookingsTable">
+                    <thead>
+                        <tr>
+                            <th>วันที่รับงาน</th>
+                            <th>ขนาดรถเครน</th>
+                            <th>สถานะคิว</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mainBookingsTableBody">
+                        <tr>
+                            <td colspan="3" class="no-data" style="text-align: center; padding: 30px; color: var(--text-muted); font-style: italic;">กำลังโหลดตารางข้อมูลคิวงาน...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    <!-- ภาพผลงาน (Media & Works Gallery Section) -->
+    <section id="media">
+        <div class="section-header reveal">
+            <h2>ผลงานการทำงาน <span class="highlight">ของเรา</span></h2>
+            <p>ประมวลภาพและวิดีโอบรรยากาศการปฏิบัติงานจริงในพื้นที่ต่างๆ เพื่อยืนยันคุณภาพและความปลอดภัย</p>
+        </div>
+
+        <div class="media-grid">
+            <!-- ภาพผลงาน 1 -->
+            <div class="media-wrapper reveal">
+                <img class="media-item" src="crane1.png" alt="ภาพการปฏิบัติงานยกของด้วยรถเครนคลองสี่เครน">
+                <div class="media-overlay">
+                    <div class="media-overlay-content">
+                        <h4>งานยกโครงสร้างหลังคา</h4>
+                        <p>ให้บริการยกของน้ำหนักสูงอย่างแม่นยำ</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ภาพผลงาน 2 -->
+            <div class="media-wrapper reveal">
+                <img class="media-item" src="crane2.png" alt="การทำงานของรถเครนคลองสี่เครน ณ ไซต์งานก่อสร้าง">
+                <div class="media-overlay">
+                    <div class="media-overlay-content">
+                        <h4>งานติดตั้งแผ่นพื้นสำเร็จรูป</h4>
+                        <p>รวดเร็ว ปลอดภัย ได้ระนาบที่ตรงเป๊ะ</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- วิดีโอผลงาน -->
+            <div class="media-wrapper video-wrapper reveal">
+                <video class="video-item" controls poster="Logo.jpg">
+                    <source src="your-video-file.mp4" type="video/mp4">
+                    เบราว์เซอร์ของคุณไม่รองรับการแสดงผลวิดีโอ
+                </video>
+            </div>
+        </div>
+    </section>
+
+    <!-- ส่วนท้ายเว็บ / ติดต่อเรา (Footer Area) -->
+    <footer id="contact">
+        <div class="footer-grid">
+            <!-- ข้อมูลแบรนด์ -->
+            <div class="footer-brand">
+                <h3>คลองสี่<span>เครน</span></h3>
+                <p>ผู้นำด้านบริการให้เช่ารถเครนขนาด 16 ตัน และ 25 ตัน ปฏิบัติงานโดยคนขับมืออาชีพ มีใบเซอร์รับรองและ ปจ.2 ทุกคัน มั่นใจได้ในความปลอดภัยตลอด 24 ชั่วโมง</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/share/18meTK2SGe/" target="_blank" class="social-link" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.tiktok.com/@aom.yukham2526?_r=1&_t=ZS-96mmsRfXlmC" target="_blank" class="social-link" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+
+            <!-- ลิงก์ด่วน -->
+            <div class="footer-links">
+                <h4>ลิงก์เมนูด่วน</h4>
+                <ul>
+                    <li><a href="#about"><i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; color: var(--primary); margin-right: 5px;"></i> ข้อมูลรถและบริการ</a></li>
+                    <li><a href="#pricing"><i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; color: var(--primary); margin-right: 5px;"></i> อัตราค่าบริการ</a></li>
+                    <li><a href="#schedule"><i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; color: var(--primary); margin-right: 5px;"></i> ตารางคิวงาน</a></li>
+                    <li><a href="#media"><i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; color: var(--primary); margin-right: 5px;"></i> ภาพผลงานจริง</a></li>
+                </ul>
+            </div>
+
+            <!-- ข้อมูลจองคิวติดต่อ -->
+            <div class="footer-contact">
+                <h4>ติดต่อและจองคิวงาน</h4>
+                <div class="contact-list">
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="fa-solid fa-phone"></i></div>
+                        <div class="contact-text">
+                            <strong>เบอร์โทรศัพท์ติดต่อด่วน</strong>
+                            <a href="tel:0829924617">082-992-4617</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="fab fa-facebook-messenger"></i></div>
+                        <div class="contact-text">
+                            <strong>Facebook Page</strong>
+                            <a href="https://www.facebook.com/share/18meTK2SGe/" target="_blank">บริการรถเครนรับจ้าง</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="fa-solid fa-location-dot"></i></div>
+                        <div class="contact-text">
+                            <strong>ที่ตั้งและเขตพื้นที่ให้บริการ</strong>
+                            <p>2/158 หมู่ 2 ต.คลองสี่ อ.คลองหลวง จ.ปทุมธานี 12120</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ลิขสิทธิ์ -->
+        <div class="footer-bottom">
+            <p>&copy; 2026 คลองสี่เครน. All Rights Reserved. ออกแบบและพัฒนาเว็บบริการด้วยมาตรฐานระดับพรีเมียม</p>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">
+                <i class="fa-solid fa-shield-heart" style="color: var(--primary);"></i> ปลอดภัย 100% ตลอดการทำงาน
+            </p>
+        </div>
+    </footer>
+
+    <!-- ปุ่มโทรด่วนลอยน้ำ (Floating Call Button) สำหรับผู้ใช้งานมือถือ -->
+    <a href="tel:0829924617" class="quick-call-btn" id="quickCall">
+        <i class="fa-solid fa-phone-volume"></i>
+        <span>โทรจองด่วน 082-992-4617</span>
+    </a>
+
+    <!-- =========================================
+       สคริปต์ JavaScript สำหรับควบคุมเอฟเฟกต์
+    ========================================= -->
+    <script>
+        // 1. ตรวจสอบการเลื่อนหน้าจอเพื่อปรับสไตล์ Header (Dynamic Header)
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // 2. ระบบ Animate on Scroll แบบกำหนดเองโดยใช้ IntersectionObserver
+        document.addEventListener('DOMContentLoaded', () => {
+            const reveals = document.querySelectorAll('.reveal');
+            
+            const revealCallback = (entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('reveal-visible');
+                        // เมื่อแสดงแล้ว สามารถหยุดสังเกตการณ์องค์ประกอบนั้นได้เลย เพื่อเพิ่ม Performance
+                        observer.unobserve(entry.target);
+                    }
+                });
+            };
+
+            const revealObserver = new IntersectionObserver(revealCallback, {
+                root: null, // viewport
+                threshold: 0.15, // แสดงเมื่อเห็นองค์ประกอบอย่างน้อย 15%
+                rootMargin: '0px 0px -50px 0px' // สังเกตการณ์ก่อนจะเข้าหน้าจอเล็กน้อย
+            });
+
+            reveals.forEach(reveal => {
+                revealObserver.observe(reveal);
+            });
+
+            // ดึงข้อมูลคิวงานมาแสดงผล (เฉพาะข้อมูลทั่วไปแบบไม่มีข้อมูลส่วนบุคคล)
+            fetchMainBookings();
+        });
+
+        // 3. ดึงข้อมูลคิวงานอัปเดตเรียลไทม์จาก Google Sheets มาแสดงผลในตาราง (กรองข้อมูล PDPA บน Server)
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbyOY2Wjjey8l0XOorX9aeTP9Nu3YXHtXMWZnY5z_HqTvi7jaq3LRzACT9ksemTTHvII/exec?public=true';
+
+        async function fetchMainBookings() {
+            const tableBody = document.getElementById('mainBookingsTableBody');
+            
+            try {
+                const response = await fetch(scriptUrl, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('ไม่สามารถดึงข้อมูลคิวได้');
+                }
+                
+                const data = await response.json();
+                
+                if (Array.isArray(data)) {
+                    renderMainBookings(data, tableBody);
+                } else {
+                    throw new Error('ข้อมูลคิวงานไม่ถูกต้อง');
+                }
+            } catch (error) {
+                console.error('Error fetching bookings:', error);
+                tableBody.innerHTML = `<tr><td colspan="3" class="no-data" style="text-align: center; padding: 30px; color: var(--text-muted); font-style: italic;">เกิดข้อผิดพลาดในการโหลดคิวงานออนไลน์ กรุณารีเฟรชหน้าเว็บอีกครั้ง</td></tr>`;
+            }
+        }
+
+        function renderMainBookings(bookings, tableBody) {
+            if (bookings.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="3" class="no-data" style="text-align: center; padding: 30px; color: var(--text-muted); font-style: italic;">ยังไม่มีคิวการจองในระบบ คิวว่างทุกวัน</td></tr>`;
+                return;
+            }
+
+            // Normalize and parse dates robustly to YYYY-MM-DD
+            bookings.forEach(booking => {
+                let isoDate = booking.date;
+                let parsedDate = new Date(booking.date);
+                
+                const isoMatch = booking.date.match(/^(\d{4})-(\d{2})-(\d{2})/);
+                if (isoMatch) {
+                    const year = parseInt(isoMatch[1]);
+                    const month = parseInt(isoMatch[2]) - 1;
+                    const day = parseInt(isoMatch[3]);
+                    parsedDate = new Date(year, month, day);
+                }
+
+                if (!isNaN(parsedDate.getTime())) {
+                    const yyyy = parsedDate.getFullYear();
+                    const mm = String(parsedDate.getMonth() + 1).padStart(2, '0');
+                    const dd = String(parsedDate.getDate()).padStart(2, '0');
+                    isoDate = `${yyyy}-${mm}-${dd}`;
+                    
+                    const thYears = yyyy + 543;
+                    const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+                    const thMonth = months[parsedDate.getMonth()];
+                    booking.displayDate = `${parsedDate.getDate()} ${thMonth} ${thYears}`;
+                } else {
+                    booking.displayDate = booking.date;
+                }
+                booking.isoDate = isoDate;
+            });
+
+            // Sort by date ascending (oldest first)
+            bookings.sort((a, b) => a.isoDate.localeCompare(b.isoDate));
+
+            tableBody.innerHTML = '';
+            bookings.forEach(booking => {
+                const tr = document.createElement('tr');
+                const is16 = booking.crane === '16 ตัน';
+                const badgeClass = is16 ? 'badge-16' : 'badge-25';
+                
+                tr.innerHTML = `
+                    <td><strong style="color: var(--text-light);">${booking.displayDate}</strong> <small style="color: var(--text-muted); display:block; font-size: 0.8rem;">(${booking.isoDate})</small></td>
+                    <td><span class="${badgeClass}">${booking.crane}</span></td>
+                    <td style="color: #ef4444; font-weight:600;"><i class="fa-solid fa-user-lock"></i> จองแล้ว</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>

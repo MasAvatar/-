@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจองคิวรถเครน | คลองสี่เครน</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Prompt & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #fdb813; /* เหลืองอุตสาหกรรมทอง */
+            --primary-hover: #ffcc00;
+            --primary-glow: rgba(253, 184, 19, 0.35);
+            --dark-bg: #0c0c0e; /* ดำคาร์บอนลึก */
+            --card-bg: #16161b; /* เทาเข้ม */
+            --card-hover: #1e1e24;
+            --text-light: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: rgba(255, 255, 255, 0.07);
+            --font-main: 'Prompt', 'Inter', sans-serif;
+            --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --shadow-premium: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+            --success-color: #10b981;
+            --error-color: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: var(--font-main);
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            background-color: rgba(12, 12, 14, 0.8);
+            padding: 15px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            backdrop-filter: blur(15px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-container img {
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+        }
+
+        .logo-text h2 {
+            font-size: 1.1rem;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .logo-text span {
+            font-size: 0.7rem;
+            color: var(--primary);
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .btn-back {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .btn-back:hover {
+            background-color: var(--primary);
+            color: var(--dark-bg);
+            border-color: var(--primary);
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1300px;
+            margin: 40px auto;
+            width: 95%;
+            display: grid;
+            grid-template-columns: 1.2fr 1.8fr;
+            gap: 30px;
+            flex-grow: 1;
+        }
+
+        @media (max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Card panels */
+        .panel {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--shadow-premium);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+        }
+
+        .panel h3 {
+            font-size: 1.3rem;
+            margin-top: 0;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-light);
+        }
+
+        .panel h3 i {
+            color: var(--primary);
+        }
+
+        /* Form styling */
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+        }
+
+        .form-input {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 15px;
+            color: white;
+            font-size: 1rem;
+            transition: var(--transition-smooth);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        /* Custom Radio Buttons for Crane Selection */
+        .crane-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .crane-option {
+            position: relative;
+        }
+
+        .crane-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .crane-card {
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .crane-card i {
+            font-size: 1.8rem;
+            color: var(--text-muted);
+            transition: var(--transition-smooth);
+        }
+
+        .crane-option input[type="radio"]:checked + .crane-card {
+            border-color: var(--primary);
+            background-color: rgba(253, 184, 19, 0.05);
+            box-shadow: 0 0 15px rgba(253, 184, 19, 0.15);
+        }
+
+        .crane-option input[type="radio"]:checked + .crane-card i {
+            color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .crane-card span {
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
+        /* Button primary */
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), #ffa200);
+            color: var(--dark-bg);
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px var(--primary-glow);
+            transition: var(--transition-smooth);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(253, 184, 19, 0.5);
+        }
+
+        .btn-submit:disabled {
+            background: #2b2b35;
+            color: var(--text-muted);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* Status and Alerts */
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid transparent;
+        }
+
+        .alert-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            display: flex;
+        }
+
+        .alert-danger {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            display: flex;
+        }
+
+        /* Connection Config UI */
+        .config-box {
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px dashed var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .config-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .config-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .config-body {
+            display: none;
+        }
+
+        .config-body.active {
+            display: block;
+        }
+
+        .config-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        /* Table & Lists */
+        .table-container {
+            max-height: 450px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: rgba(0, 0, 0, 0.15);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background-color: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 12px 15px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            color: var(--text-light);
+            vertical-align: middle;
+        }
+
+        td:nth-child(2), td:nth-child(4), td:nth-child(5), th:nth-child(2), th:nth-child(4), th:nth-child(5) {
+            white-space: nowrap;
+        }
+
+        /* Column Widths & Table Styles */
+        th:nth-child(1), td:nth-child(1) { width: 140px; } /* วันที่ */
+        th:nth-child(2), td:nth-child(2) { width: 90px; }  /* รถเครน */
+        th:nth-child(3), td:nth-child(3) { min-width: 180px; word-break: break-word; } /* ที่อยู่หน้างาน */
+        th:nth-child(4), td:nth-child(4) { width: 130px; } /* เบอร์ติดต่อ */
+        th:nth-child(5), td:nth-child(5) { width: 95px; text-align: center; }  /* การจัดการ */
+
+        tr {
+            transition: background-color 0.2s ease;
+        }
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Phone Link Premium Style */
+        .phone-link {
+            color: var(--primary) !important;
+            text-decoration: none !important;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition-smooth);
+        }
+        .phone-link:hover {
+            color: var(--primary-hover) !important;
+            text-decoration: underline !important;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge-16 {
+            background-color: rgba(253, 184, 19, 0.1);
+            border: 1px solid rgba(253, 184, 19, 0.3);
+            color: var(--primary);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        .badge-25 {
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+        }
+
+        /* Mobile optimization */
+        @media (max-width: 600px) {
+            header {
+                padding: 10px 4%;
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+            .logo-container {
+                justify-content: center;
+            }
+            .btn-back {
+                width: 100%;
+                justify-content: center;
+                padding: 10px;
+            }
+            .main-container {
+                margin: 20px auto;
+                width: 95%;
+                gap: 20px;
+            }
+            .panel {
+                padding: 20px 15px;
+            }
+            .crane-selector {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .panel h3 {
+                font-size: 1.15rem;
+                margin-bottom: 20px;
+            }
+            td, th {
+                padding: 8px 10px;
+                font-size: 0.85rem;
+            }
+            .table-container {
+                max-height: 350px;
+            }
+        }
+
+        /* Delete Button Style */
+        .btn-delete {
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-delete:hover {
+            background-color: var(--error-color);
+            border-color: var(--error-color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+        }
+
+        /* Responsive Table Container Fix */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        /* Custom Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 450px;
+            padding: 25px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(239, 68, 68, 0.1);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            color: var(--error-color);
+        }
+
+        .modal-header i {
+            font-size: 1.8rem;
+        }
+
+        .modal-header h4 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .modal-body {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            border: none;
+        }
+
+        .modal-btn-cancel {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+        }
+
+        .modal-btn-cancel:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-btn-danger {
+            background: linear-gradient(135deg, var(--error-color), #dc2626);
+            color: white;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .modal-btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo-container">
+            <img src="Logo.jpg" alt="คลองสี่เครน โลโก้">
+            <div class="logo-text">
+                <h2>คลองสี่เครน</h2>
+                <span>ระบบบริหารคิวรถเครน</span>
+            </div>
+        </div>
+        <button class="btn-back" onclick="window.location.href='index.html'">
+            <i class="fa-solid fa-arrow-left"></i> กลับหน้าหลักเว็บ
+        </button>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        
+        <!-- Left Side: Form Panel -->
+        <div class="panel">
+            <h3><i class="fa-solid fa-calendar-plus"></i> เพิ่มคิวการจองรถเครน</h3>
+
+            <!-- Error/Success Alerts -->
+            <div id="statusAlert" class="alert">
+                <span id="alertIcon"><i class="fa-solid fa-circle-exclamation"></i></span>
+                <span id="alertMessage">ข้อความแจ้งเตือน</span>
+            </div>
+
+            <!-- Booking Form -->
+            <form id="bookingForm" onsubmit="handleFormSubmit(event)">
+                
+                <!-- Date Picker -->
+                <div class="form-group">
+                    <label for="bookingDate" class="form-label">เลือกวันที่รับงาน (ห้ามจองรถขนาดเดียวกันชนกัน)</label>
+                    <input type="date" id="bookingDate" required class="form-input" onchange="checkBookingConflict()">
+                </div>
+
+                <!-- Crane Size Radio Selection -->
+                <div class="form-group">
+                    <label class="form-label">เลือกขนาดรถเครน</label>
+                    <div class="crane-selector">
+                        <label class="crane-option">
+                            <input type="radio" name="craneSize" value="16 ตัน" checked onchange="checkBookingConflict()">
+                            <div class="crane-card">
+                                <i class="fa-solid fa-truck-ramp-box"></i>
+                                <span class="badge-16">16 ตัน</span>
+                            </div>
+                        </label>
+                        <label class="crane-option">
+                            <input type="radio" name="craneSize" value="25 ตัน" onchange="checkBookingConflict()">
+                            <div class="crane-card">
+                                <i class="fa-solid fa-truck-moving"></i>
+                                <span class="badge-25">25 ตัน</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Worksite Address Input -->
+                <div class="form-group">
+                    <label for="bookingAddress" class="form-label">ที่อยู่หน้างาน *</label>
+                    <textarea id="bookingAddress" required class="form-input" placeholder="ระบุสถานที่ทำงาน/พิกัดหน้างาน เช่น คลองสี่ คลองหลวง ปทุมธานี" rows="3"></textarea>
+                </div>
+
+                <!-- Contact Phone Input -->
+                <div class="form-group">
+                    <label for="bookingPhone" class="form-label">เบอร์ติดต่อ *</label>
+                    <input type="tel" id="bookingPhone" required class="form-input" placeholder="ระบุเบอร์โทรศัพท์ผู้ติดต่อ เช่น 089-XXXXXXX" pattern="[0-9\-]{9,15}">
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> บันทึกข้อมูลคิวงาน
+                </button>
+            </form>
+        </div>
+
+        <!-- Right Side: Existing Bookings Panel -->
+        <div class="panel">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; gap: 10px; flex-wrap: wrap;">
+                <h3 style="margin: 0;"><i class="fa-solid fa-calendar-days"></i> ตารางคิวงานปัจจุบัน</h3>
+                <div style="display: flex; gap: 8px;">
+                    <a href="index.html" class="btn-back" style="padding: 6px 12px; font-size: 0.8rem; background-color: rgba(253, 184, 19, 0.1); border-color: rgba(253, 184, 19, 0.3); color: var(--primary);"><i class="fa-solid fa-house"></i> ดูหน้าเว็บหลัก</a>
+                    <button class="btn-back" style="padding: 6px 12px; font-size: 0.8rem;" onclick="fetchExistingBookings()" title="ดึงข้อมูลล่าสุด">
+                        <i class="fa-solid fa-rotate"></i> อัปเดตข้อมูล
+                    </button>
+                </div>
+            </div>
+
+            <!-- Existing Bookings Table -->
+            <div class="table-container">
+                <table id="bookingsTable">
+                    <thead>
+                        <tr>
+                            <th>วันที่</th>
+                            <th>รถเครน</th>
+                            <th>ที่อยู่หน้างาน</th>
+                            <th>เบอร์ติดต่อ</th>
+                            <th>การจัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsTableBody">
+                        <tr>
+                            <td colspan="5" class="no-data">กำลังโหลดตารางข้อมูลคิวงาน...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Custom Confirm Modal -->
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <h4>ยืนยันการลบคิวงาน</h4>
+            </div>
+            <div class="modal-body">
+                คุณต้องการลบคิวงานวันที่ <strong id="deleteDateText"></strong> สำหรับรถเครนขนาด <strong id="deleteCraneText"></strong> ใช่หรือไม่?
+                <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 10px;">*การดำเนินการนี้จะไม่สามารถย้อนกลับได้ ข้อมูลการจองในแถวดังกล่าวจะถูกลบออกจาก Google Sheet ทันที</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-cancel" onclick="closeConfirmModal()">ยกเลิก</button>
+                <button id="confirmDeleteBtn" class="modal-btn modal-btn-danger">ยืนยันลบข้อมูล</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2026 คลองสี่เครน. ระบบลงคิวงานรวดเร็วสำหรับผู้รับจ้างปลอดภัยและอัปเดตเรียลไทม์
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Global variables - Hardcoded URL
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbyOY2Wjjey8l0XOorX9aeTP9Nu3YXHtXMWZnY5z_HqTvi7jaq3LRzACT9ksemTTHvII/exec';
+        let bookingsList = [];
+
+        // Load configuration on startup
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set default date input value to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const yyyy = tomorrow.getFullYear();
+            const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+            const dd = String(tomorrow.getDate()).padStart(2, '0');
+            document.getElementById('bookingDate').value = `${yyyy}-${mm}-${dd}`;
+
+            // Fetch bookings directly on load
+            fetchExistingBookings();
+        });
+
+        // Helper to show custom alerts
+        function showAlert(type, message, iconClass) {
+            const alertBox = document.getElementById('statusAlert');
+            const msgSpan = document.getElementById('alertMessage');
+            const iconSpan = document.getElementById('alertIcon');
+
+            alertBox.className = 'alert'; // reset
+            if (type === 'success') {
+                alertBox.classList.add('alert-success');
+            } else {
+                alertBox.classList.add('alert-danger');
+            }
+            
+            iconSpan.innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
+            msgSpan.textContent = message;
+            alertBox.style.display = 'flex';
+        }
+
+        function hideAlert() {
+            document.getElementById('statusAlert').style.display = 'none';
+        }
+
+        // Table status helpers
+        function setTableNoData(message) {
+            const body = document.getElementById('bookingsTableBody');
+            body.innerHTML = `<tr><td colspan="5" class="no-data">${message}</td></tr>`;
+        }
+
+        // Fetch bookings from script
+        async function fetchExistingBookings() {
+            setTableNoData('กำลังดึงคิวงานล่าสุดจาก Google Sheets...');
+            
+            try {
+                // Fetch uses GET to retrieve all bookings
+                const response = await fetch(scriptUrl, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('ไม่สามารถดึงข้อมูลคิวได้สำเร็จ');
+                }
+                
+                const data = await response.json();
+                
+                if (Array.isArray(data)) {
+                    bookingsList = data;
+                    renderBookingsTable(data);
+                    checkBookingConflict();
+                } else if (data.error) {
+                    throw new Error(data.error);
+                } else {
+                    throw new Error('ข้อมูลที่ได้รับไม่ถูกต้อง');
+                }
+            } catch (error) {
+                console.error('Error fetching:', error);
+                showAlert('danger', '❌ ไม่สามารถดึงข้อมูลคิวงานได้: ' + error.message, 'fa-circle-exclamation');
+                setTableNoData('เกิดข้อผิดพลาดในการโหลดคิวงาน กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
+            }
+        }
+
+        // Render table
+        function renderBookingsTable(bookings) {
+            const body = document.getElementById('bookingsTableBody');
+            if (bookings.length === 0) {
+                setTableNoData('ยังไม่มีประวัติคิวการจองในระบบ');
+                return;
+            }
+
+            // Normalize and parse dates robustly to YYYY-MM-DD
+            bookings.forEach(booking => {
+                let isoDate = booking.date;
+                let parsedDate = new Date(booking.date);
+                
+                // Solve timezone shift when parsing YYYY-MM-DD strings
+                const isoMatch = booking.date.match(/^(\d{4})-(\d{2})-(\d{2})/);
+                if (isoMatch) {
+                    const year = parseInt(isoMatch[1]);
+                    const month = parseInt(isoMatch[2]) - 1;
+                    const day = parseInt(isoMatch[3]);
+                    parsedDate = new Date(year, month, day);
+                }
+
+                if (!isNaN(parsedDate.getTime())) {
+                    const yyyy = parsedDate.getFullYear();
+                    const mm = String(parsedDate.getMonth() + 1).padStart(2, '0');
+                    const dd = String(parsedDate.getDate()).padStart(2, '0');
+                    isoDate = `${yyyy}-${mm}-${dd}`;
+                    
+                    const thYears = yyyy + 543;
+                    const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+                    const thMonth = months[parsedDate.getMonth()];
+                    booking.displayDate = `${parsedDate.getDate()} ${thMonth} ${thYears}`;
+                } else {
+                    booking.displayDate = booking.date;
+                }
+                booking.isoDate = isoDate;
+            });
+
+            // Sort by date ascending (oldest first, i.e., chronological)
+            bookings.sort((a, b) => a.isoDate.localeCompare(b.isoDate));
+
+            body.innerHTML = '';
+            bookings.forEach(booking => {
+                const tr = document.createElement('tr');
+                
+                // Crane badge styling
+                const is16 = booking.crane === '16 ตัน';
+                const badgeClass = is16 ? 'badge-16' : 'badge-25';
+                
+                tr.innerHTML = `
+                    <td><strong>${booking.displayDate}</strong> <small style="color: var(--text-muted); display:block; font-size: 0.8rem;">(${booking.isoDate})</small></td>
+                    <td><span class="${badgeClass}">${booking.crane}</span></td>
+                    <td style="word-break: break-word;">${booking.address || '-'}</td>
+                    <td><a href="tel:${booking.phone}" class="phone-link"><i class="fa-solid fa-phone"></i> ${booking.phone || '-'}</a></td>
+                    <td style="text-align: center;">
+                        <button class="btn-delete" onclick="confirmDelete('${booking.isoDate}', '${booking.crane}')">
+                            <i class="fa-solid fa-trash-can"></i> ลบ
+                        </button>
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+        }
+
+        // Realtime Client-side overlap conflict check
+        function checkBookingConflict() {
+            const chosenDate = document.getElementById('bookingDate').value;
+            const chosenCrane = document.querySelector('input[name="craneSize"]:checked').value;
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (!chosenDate) return;
+
+            // Check if there is an overlap (เปรียบเทียบจาก isoDate ที่แปลงเป็น YYYY-MM-DD เรียบร้อยแล้ว)
+            const conflict = bookingsList.find(b => b.isoDate === chosenDate && b.crane === chosenCrane);
+
+            if (conflict) {
+                showAlert('danger', `⚠️ คิวชนกัน! รถเครนขนาด ${chosenCrane} มีการจองคิวแล้วในวันที่ ${chosenDate} กรุณาเลือกวันที่อื่นหรือขนาดอื่น`, 'fa-triangle-exclamation');
+                submitBtn.disabled = true;
+                return true;
+            } else {
+                hideAlert();
+                submitBtn.disabled = false;
+                return false;
+            }
+        }
+
+        // Submit form
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+
+            const chosenDate = document.getElementById('bookingDate').value;
+            const chosenCrane = document.querySelector('input[name="craneSize"]:checked').value;
+            const chosenAddress = document.getElementById('bookingAddress').value;
+            const chosenPhone = document.getElementById('bookingPhone').value;
+            const submitBtn = document.getElementById('submitBtn');
+
+            // 1. Re-validate conflict client-side
+            if (checkBookingConflict()) return;
+
+            // 2. Start Loading state
+            submitBtn.disabled = true;
+            const originalBtnContent = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner"></span> กำลังบันทึกข้อมูล...';
+
+            try {
+                // Post object to Google Apps Script
+                const response = await fetch(scriptUrl, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8', // GAS handles text/plain post payload nicely without preflight issues
+                    },
+                    body: JSON.stringify({
+                        action: 'add',
+                        date: chosenDate,
+                        crane: chosenCrane,
+                        address: chosenAddress,
+                        phone: chosenPhone
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('ระบบ Google Sheets ปฏิเสธการเชื่อมต่อ');
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('success', `🎉 ${result.message}`, 'fa-circle-check');
+                    // Reset form fields
+                    document.getElementById('bookingAddress').value = '';
+                    document.getElementById('bookingPhone').value = '';
+                    // Refresh data in table
+                    fetchExistingBookings();
+                } else {
+                    showAlert('danger', `❌ ไม่สามารถบันทึกคิว: ${result.message}`, 'fa-triangle-exclamation');
+                }
+
+            } catch (error) {
+                console.error('Error submitting booking:', error);
+                showAlert('danger', '❌ เกิดข้อผิดพลาดในการบันทึกคิว: ' + error.message, 'fa-circle-exclamation');
+            } finally {
+                // Reset submit button state
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnContent;
+            }
+        }
+
+        // Deletion confirmation and action handling
+        let pendingDeleteDate = '';
+        let pendingDeleteCrane = '';
+
+        function confirmDelete(date, crane) {
+            pendingDeleteDate = date;
+            pendingDeleteCrane = crane;
+            
+            document.getElementById('deleteDateText').textContent = date;
+            document.getElementById('deleteCraneText').textContent = crane;
+            
+            const modal = document.getElementById('confirmModal');
+            modal.classList.add('active');
+        }
+
+        function closeConfirmModal() {
+            const modal = document.getElementById('confirmModal');
+            modal.classList.remove('active');
+            pendingDeleteDate = '';
+            pendingDeleteCrane = '';
+        }
+
+        // Bind confirm button for deletion
+        document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+            if (!pendingDeleteDate || !pendingDeleteCrane) return;
+            
+            const confirmBtn = document.getElementById('confirmDeleteBtn');
+            const originalBtnText = confirmBtn.textContent;
+            
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<span class="spinner"></span> กำลังลบข้อมูล...';
+            
+            try {
+                const response = await fetch(scriptUrl, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
+                    body: JSON.stringify({
+                        action: 'delete',
+                        date: pendingDeleteDate,
+                        crane: pendingDeleteCrane
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('ระบบ Google Sheets ปฏิเสธการเชื่อมต่อ');
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('success', `🎉 ลบคิวงานสำเร็จ: ${result.message}`, 'fa-circle-check');
+                    closeConfirmModal();
+                    fetchExistingBookings(); // Refresh list
+                } else {
+                    showAlert('danger', `❌ ไม่สามารถลบคิว: ${result.message}`, 'fa-triangle-exclamation');
+                    closeConfirmModal();
+                }
+            } catch (error) {
+                console.error('Error deleting booking:', error);
+                showAlert('danger', '❌ เกิดข้อผิดพลาดในการลบคิวงาน: ' + error.message, 'fa-circle-exclamation');
+                closeConfirmModal();
+            } finally {
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = originalBtnText;
+            }
+        });
+    </script>
+</body>
+</html>
