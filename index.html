@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="th">
 <head>
     <script>
@@ -695,7 +695,7 @@
         }
 
         /* =========================================
-           ตารางราคาบริการ (Premium Pricing Cards)
+           ตารางอัตราค่าบริการ (Premium Pricing Cards)
         ========================================= */
         .pricing-grid {
             display: grid;
@@ -857,54 +857,51 @@
         }
 
         /* =========================================
-           ส่วนตารางคิวงาน (Live Schedule Section)
+           ส่วนตารางคิวง�        /* =========================================
+           แกลลอรี่ผลงานแบบสไลด์ (Media & Works Carousel Slider)
         ========================================= */
-        .schedule-card {
-            border: 1px solid var(--border-color);
-            background-color: rgba(255,255,255,0.01);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
-        }
-
-        .iframe-container {
+        .slider-container {
             position: relative;
             width: 100%;
-            height: 500px;
-            border: none;
-            overflow: hidden;
+            overflow: visible;
+            padding: 0 40px;
         }
 
-        .iframe-container iframe {
-            border: none;
+        .slider-track-viewport {
             width: 100%;
-            height: 100%;
-            /* ปรับแต่ง iframe ให้กลมกลืนกับธีมมืด */
-            filter: invert(0.9) hue-rotate(180deg) contrast(1.1);
-            opacity: 0.85;
-            transition: var(--transition-smooth);
+            overflow: hidden;
+            border-radius: 12px;
         }
 
-        .iframe-container iframe:hover {
-            opacity: 1;
+        .slider-track {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            gap: 20px;
         }
 
-        /* =========================================
-           แกลลอรี่ผลงาน (Media & Works Gallery)
-        ========================================= */
-        .media-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-            gap: 25px;
-        }
-
-        .media-wrapper {
+        .slider-track .media-wrapper {
+            flex: 0 0 calc((100% - (2 * 20px)) / 3);
             position: relative;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: var(--shadow-premium);
             border: 1px solid var(--border-color);
             aspect-ratio: 4/3;
+        }
+
+        @media (max-width: 991px) {
+            .slider-track .media-wrapper {
+                flex: 0 0 calc((100% - (1 * 20px)) / 2);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .slider-container {
+                padding: 0 10px;
+            }
+            .slider-track .media-wrapper {
+                flex: 0 0 100%;
+            }
         }
 
         .media-item {
@@ -959,6 +956,84 @@
 
         .media-wrapper:hover .media-overlay-content {
             transform: translateY(0);
+        }
+
+        /* ปุ่มเลื่อนสไลด์ (Navigation Buttons) */
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 48px;
+            background-color: rgba(22, 22, 27, 0.85);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 1.2rem;
+            transition: var(--transition-bounce);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .slider-btn:hover {
+            background-color: var(--primary);
+            color: var(--dark-bg);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .slider-btn:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        .prev-btn {
+            left: -15px;
+        }
+
+        .next-btn {
+            right: -15px;
+        }
+
+        @media (max-width: 576px) {
+            .prev-btn {
+                left: 0;
+            }
+            .next-btn {
+                right: 0;
+            }
+            .slider-btn {
+                width: 38px;
+                height: 38px;
+                font-size: 1rem;
+            }
+        }
+
+        /* จุดวงกลมบอกหน้าสไลด์ (Dots Indicators) */
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .slider-dot {
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .slider-dot.active {
+            background-color: var(--primary);
+            width: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 8px var(--primary-glow);
         }
 
         /* ตกแต่งส่วน Video */
@@ -1153,22 +1228,39 @@
             right: 30px;
             background: linear-gradient(135deg, #10b981, #059669);
             color: white;
-            padding: 16px 24px;
-            border-radius: 50px;
+            width: 56px;
+            height: 56px;
+            border-radius: 56px;
             font-weight: 700;
             font-size: 1rem;
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: flex-start;
+            padding-left: 17px;
             box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
             z-index: 999;
             transition: var(--transition-bounce);
             border: 2px solid rgba(255, 255, 255, 0.15);
+            overflow: hidden;
+            white-space: nowrap;
         }
 
         .quick-call-btn i {
             font-size: 1.25rem;
+            min-width: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             animation: phone-shake 1.5s infinite;
+        }
+
+        .quick-call-btn span {
+            font-size: 0.95rem;
+            opacity: 0;
+            transform: translateX(15px);
+            transition: var(--transition-smooth);
+            margin-left: 10px;
+            pointer-events: none;
         }
 
         @keyframes phone-shake {
@@ -1177,11 +1269,22 @@
             20%, 40%, 60%, 80% { transform: rotate(10deg); }
         }
 
-        .quick-call-btn:hover {
-            transform: scale(1.05) translateY(-3px);
+        /* เมื่อชี้เมาส์หรือมีการกดค้าง ให้ปุ่มยืดขยายออกด้านข้าง */
+        .quick-call-btn:hover,
+        .quick-call-btn.expanded {
+            width: 250px;
+            border-radius: 50px;
+            padding-left: 20px;
             box-shadow: 0 12px 30px rgba(16, 185, 129, 0.6);
-            color: white;
         }
+
+        .quick-call-btn:hover span,
+        .quick-call-btn.expanded span {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+
 
         /* =========================================
            ระบบตารางคิวงานอัปเดตเรียลไทม์ (Live Schedule Table)
@@ -1343,8 +1446,15 @@
             .quick-call-btn {
                 bottom: 20px;
                 right: 20px;
-                padding: 12px 20px;
+                width: 50px;
+                height: 50px;
+                padding-left: 14px;
                 font-size: 0.9rem;
+            }
+            .quick-call-btn:hover,
+            .quick-call-btn.expanded {
+                width: 220px;
+                padding-left: 18px;
             }
 
             .floating-social {
@@ -1385,7 +1495,7 @@
     <!-- แถบเมนูบน (Header) -->
     <header id="header">
         <div class="logo-container">
-            <img src="Logo.jpg" alt="คลองสี่เครน โลโก้">
+            <img src="Picture/Logo.jpg" alt="คลองสี่เครน โลโก้">
             <div class="logo-text">
                 <h2>คลองสี่เครน</h2>
                 <span>บริการรถเครน 24 ชั่วโมง</span>
@@ -1478,8 +1588,8 @@
     <!-- ช่องทางการติดต่อและแพ็กเกจการเช่า (Contact & Rental Packages Section) -->
     <section id="pricing">
         <div class="section-header reveal">
-            <h2>จองคิวและ <span class="highlight">ประเมินราคาฟรี</span></h2>
-            <p>เลือกรูปแบบการเช่ารถเครนที่เหมาะสมกับงานของคุณ และติดต่อเราเพื่อประเมินราคาที่ดีที่สุดได้ตลอด 24 ชั่วโมง</p>
+            <h2>จองคิวและ <span class="highlight">ประเมินค่าบริการโดยไม่มีค่าใช้จ่าย</span></h2>
+            <p>เลือกรูปแบบการเช่ารถเครนที่เหมาะสมกับงานของคุณ และติดต่อเราเพื่อประเมินอัตราค่าบริการที่คุ้มค่าสูงสุดได้ตลอด 24 ชั่วโมง</p>
         </div>
 
         <div class="pricing-grid">
@@ -1489,15 +1599,15 @@
                     <h3>เช่าครึ่งวัน (Half Day)</h3>
                     <div style="margin: 20px 0;">
                         <a href="https://www.facebook.com/share/18meTK2SGe/" target="_blank" class="pricing-cta" style="background: linear-gradient(135deg, #1877F2, #0d5ad1); color: white; border: none; font-size: 1rem; padding: 14px 20px; box-shadow: 0 4px 15px rgba(24, 119, 242, 0.3); border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; font-weight: 700; transition: var(--transition-smooth);">
-                            <i class="fab fa-facebook-messenger" style="font-size: 1.2rem;"></i> ทักแชท Facebook ทันที
+                            <i class="fab fa-facebook-messenger" style="font-size: 1.2rem;"></i> ติดต่อเราผ่าน Facebook Messenger
                         </a>
                     </div>
                 </div>
                 <ul class="pricing-features" style="border-top: 1px solid var(--border-color); padding-top: 20px;">
-                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> เลือกรอบการยกได้ (เช้า 4 ชม. / บ่าย 4 ชม.)</li>
-                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> รอบเช้า: 08:00 - 12:00 น. / รอบบ่าย: 13:00 - 17:00 น.</li>
-                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> รวมบริการรถเครน คนขับ และค่าน้ำมันเรียบร้อย</li>
-                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> ประเมินราคาตามขนาดรถ 16 ตัน หรือ 25 ตัน</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> เลือกช่วงเวลาการปฏิบัติงานได้ (รอบเช้า 4 ชั่วโมง หรือ รอบบ่าย 4 ชั่วโมง)</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> รอบเช้า: 08:00 น. - 12:00 น. และ รอบบ่าย: 13:00 น. - 17:00 น.</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> อัตราค่าบริการรวมรถเครน พนักงานควบคุม และค่าน้ำมันเชื้อเพลิงเรียบร้อยแล้ว</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> ประเมินอัตราค่าบริการตามขนาดของรถเครน 16 ตัน หรือ 25 ตัน</li>
                     <li><i class="fa-solid fa-info-circle" style="color: var(--primary);"></i> เหมาะสำหรับงานยกชิ้นงานปริมาณน้อยหรือระยะเวลาสั้น</li>
                 </ul>
                 <a href="tel:0829924617" class="pricing-cta"><i class="fa-solid fa-phone"></i> โทรติดต่อ: 082-992-4617</a>
@@ -1505,7 +1615,7 @@
 
             <!-- เช่าเต็มวัน - เด่นพิเศษ -->
             <div class="pricing-card featured reveal">
-                <div class="featured-tag">คุ้มค่าที่สุด</div>
+                <div class="featured-tag">คุ้มค่าสูงสุด</div>
                 <div class="pricing-header">
                     <h3>เช่าเต็มวัน (Full Day)</h3>
                     <div style="margin: 20px 0;">
@@ -1515,13 +1625,13 @@
                     </div>
                 </div>
                 <ul class="pricing-features" style="border-top: 1px solid var(--border-color); padding-top: 20px;">
-                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> เวลาทำแบบจุใจ 8 ชั่วโมง (08:00 - 17:00 น.)</li>
-                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> รวมคนขับพร้อมค่าน้ำมันสำหรับการปฏิบัติงาน</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> ระยะเวลาการปฏิบัติงานเต็มวัน 8 ชั่วโมง (08:00 น. - 17:00 น.)</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> อัตราค่าบริการรวมพนักงานควบคุมรถเครนพร้อมค่าน้ำมันเชื้อเพลิงสำหรับการปฏิบัติงาน</li>
                     <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> เลือกใช้งานรถเครนขนาด 16 ตัน หรือ 25 ตัน ได้ตามความเหมาะสม</li>
-                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> ฟรี! บริการให้คำปรึกษาและช่วยประเมินการใช้รถหน้างาน</li>
-                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> เหมาะสำหรับงานไซต์ก่อสร้างที่ต้องยกย้ายของตลอดทั้งวัน</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> บริการให้คำปรึกษาและประเมินความเหมาะสมในการใช้งานรถเครน ณ หน้างาน โดยไม่มีค่าใช้จ่าย</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> เหมาะสำหรับงานโครงการก่อสร้างที่ต้องยกเคลื่อนย้ายวัสดุอุปกรณ์ตลอดทั้งวัน</li>
                 </ul>
-                <a href="https://www.facebook.com/share/18meTK2SGe/" target="_blank" class="pricing-cta" style="background: linear-gradient(135deg, var(--primary), #ffa200); color: var(--dark-bg);"><i class="fab fa-facebook-f"></i> ทักแชท Facebook Page</a>
+                <a href="https://www.facebook.com/share/18meTK2SGe/" target="_blank" class="pricing-cta" style="background: linear-gradient(135deg, var(--primary), #ffa200); color: var(--dark-bg);"><i class="fab fa-facebook-f"></i> ติดต่อสอบถามผ่าน Facebook Page</a>
             </div>
 
             <!-- งานเหมา / ล่วงเวลา -->
@@ -1530,15 +1640,15 @@
                     <h3>รายเดือน / งานเหมา / OT</h3>
                     <div style="margin: 20px 0;">
                         <a href="https://line.me/ti/p/Qo4nIN0yg_" target="_blank" class="pricing-cta" style="background: linear-gradient(135deg, #00C300, #009900); color: white; border: none; font-size: 1rem; padding: 14px 20px; box-shadow: 0 4px 15px rgba(0, 195, 0, 0.3); border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; font-weight: 700; transition: var(--transition-smooth);">
-                            <i class="fab fa-line" style="font-size: 1.3rem;"></i> แอดไลน์เพื่อส่งประเมินราคา
+                            <i class="fab fa-line" style="font-size: 1.3rem;"></i> เพิ่มเพื่อนทาง Line เพื่อส่งข้อมูลสำหรับการประเมินค่าบริการ
                         </a>
                     </div>
                 </div>
                 <ul class="pricing-features" style="border-top: 1px solid var(--border-color); padding-top: 20px;">
-                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> คิดค่าล่วงเวลา (OT) ตามขนาดรถเครนและขอบเขตงานจริง</li>
-                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> งานเหมาโครงสร้างหรือโปรเจกต์ใหญ่ ประเมินราคาฟรีไม่มีค่าใช้จ่าย</li>
-                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> มีข้อเสนอราคาพิเศษสำหรับการเช่ารายเดือนหรือระยะยาว</li>
-                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> ออกใบเสนอราคา (Quotation) และใบเสร็จรับเงินอย่างถูกต้อง</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> คำนวณค่าล่วงเวลา (OT) ตามขนาดรถเครนและขอบเขตการปฏิบัติงานจริง</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> งานเหมาโครงสร้างหรือโครงการขนาดใหญ่ บริการประเมินค่าบริการฟรีโดยไม่มีค่าใช้จ่ายเพิ่มเติม</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> ข้อเสนออัตราค่าบริการพิเศษสำหรับการเช่ารายเดือนหรือระยะยาว</li>
+                    <li><i class="fa-solid fa-check-circle" style="color: #10b981;"></i> การออกใบเสนอราคา (Quotation) และใบเสร็จรับเงินอย่างถูกต้องตามระเบียบ</li>
                     <li><i class="fa-solid fa-info-circle" style="color: var(--primary);"></i> ทีมงานยินดีให้คำปรึกษาเพื่อวางแผนบริหารงบประมาณ</li>
                 </ul>
                 <a href="tel:0829924617" class="pricing-cta"><i class="fa-solid fa-phone"></i> โทรติดต่อ: 082-992-4617</a>
@@ -1574,39 +1684,129 @@
     <section id="media">
         <div class="section-header reveal">
             <h2>ผลงานการทำงาน <span class="highlight">ของเรา</span></h2>
-            <p>ประมวลภาพและวิดีโอบรรยากาศการปฏิบัติงานจริงในพื้นที่ต่างๆ เพื่อยืนยันคุณภาพและความปลอดภัย</p>
+            <p>ประมวลภาพบรรยากาศการปฏิบัติงานจริงในพื้นที่ต่างๆ เพื่อยืนยันคุณภาพและความปลอดภัย</p>
         </div>
 
-        <div class="media-grid">
-            <!-- ภาพผลงาน 1 -->
-            <div class="media-wrapper reveal">
-                <img class="media-item" src="crane1.png" alt="ภาพการปฏิบัติงานยกของด้วยรถเครนคลองสี่เครน">
-                <div class="media-overlay">
-                    <div class="media-overlay-content">
-                        <h4>งานยกโครงสร้างหลังคา</h4>
-                        <p>ให้บริการยกของน้ำหนักสูงอย่างแม่นยำ</p>
+        <div class="slider-container reveal">
+            <!-- ปุ่มควบคุมการเลื่อน ซ้าย-ขวา -->
+            <button class="slider-btn prev-btn" id="prevBtn" aria-label="Previous Slide">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button class="slider-btn next-btn" id="nextBtn" aria-label="Next Slide">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+
+            <!-- พื้นที่แสดงรูปภาพแบบสไลด์ -->
+            <div class="slider-track-viewport">
+                <div class="slider-track" id="sliderTrack">
+                    <!-- สไลด์ 1: Logo.jpg -->
+                    <div class="media-wrapper">
+                        <a href="https://www.facebook.com/share/18meTK2SGe/" target="_blank" title="คลิกเพื่อดูข้อมูลเพิ่มเติมบน Facebook">
+                            <img class="media-item" src="Picture/Logo.jpg" alt="โลโก้ คลองสี่เครน">
+                            <div class="media-overlay">
+                                <div class="media-overlay-content">
+                                    <h4>คลองสี่เครน ยินดีให้บริการ</h4>
+                                    <p><i class="fa-solid fa-location-dot"></i> ปทุมธานีและกรุงเทพฯ | โลโก้บริษัท</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- สไลด์ 2: ภาพใน Picture 1 -->
+                    <div class="media-wrapper">
+                        <a href="https://www.facebook.com/share/18meTK2SGe/" target="_blank" title="คลิกเพื่อดูรูปภาพเพิ่มเติมบน Facebook">
+                            <img class="media-item" src="Picture/706437175_1004562882322588_3701610298619543378_n.jpg" alt="ผลงานการทำงาน คลองสี่เครน">
+                            <div class="media-overlay">
+                                <div class="media-overlay-content">
+                                    <h4>บริการรถเครน คลองสี่เครน</h4>
+                                    <p><i class="fa-solid fa-location-dot"></i> ปทุมธานีและกรุงเทพฯ | คลิกชมรูปภาพบน Facebook</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- สไลด์ 3: ภาพใน Picture 2 -->
+                    <div class="media-wrapper">
+                        <a href="https://www.facebook.com/share/18meTK2SGe/" target="_blank" title="คลิกเพื่อดูรูปภาพเพิ่มเติมบน Facebook">
+                            <img class="media-item" src="Picture/709305810_1008627735249436_2783343695905485055_n.jpg" alt="ผลงานการทำงาน คลองสี่เครน">
+                            <div class="media-overlay">
+                                <div class="media-overlay-content">
+                                    <h4>บริการรถเครน คลองสี่เครน</h4>
+                                    <p><i class="fa-solid fa-location-dot"></i> ปทุมธานีและกรุงเทพฯ | คลิกชมรูปภาพบน Facebook</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- สไลด์ 4: ภาพใน Picture 3 -->
+                    <div class="media-wrapper">
+                        <a href="https://www.facebook.com/share/18meTK2SGe/" target="_blank" title="คลิกเพื่อดูรูปภาพเพิ่มเติมบน Facebook">
+                            <img class="media-item" src="Picture/709589059_1008627705249439_5944585181388756970_n.jpg" alt="ผลงานการทำงาน คลองสี่เครน">
+                            <div class="media-overlay">
+                                <div class="media-overlay-content">
+                                    <h4>บริการรถเครน คลองสี่เครน</h4>
+                                    <p><i class="fa-solid fa-location-dot"></i> ปทุมธานีและกรุงเทพฯ | คลิกชมรูปภาพบน Facebook</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- สไลด์ 5: ภาพใน Picture 4 -->
+                    <div class="media-wrapper">
+                        <a href="https://www.facebook.com/share/18meTK2SGe/" target="_blank" title="คลิกเพื่อดูรูปภาพเพิ่มเติมบน Facebook">
+                            <img class="media-item" src="Picture/710722889_1012373058208237_1884868430098777725_n.jpg" alt="ผลงานการทำงาน คลองสี่เครน">
+                            <div class="media-overlay">
+                                <div class="media-overlay-content">
+                                    <h4>บริการรถเครน คลองสี่เครน</h4>
+                                    <p><i class="fa-solid fa-location-dot"></i> ปทุมธานีและกรุงเทพฯ | คลิกชมรูปภาพบน Facebook</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- สไลด์ 6: ภาพใน Picture 5 -->
+                    <div class="media-wrapper">
+                        <a href="https://www.facebook.com/share/18meTK2SGe/" target="_blank" title="คลิกเพื่อดูรูปภาพเพิ่มเติมบน Facebook">
+                            <img class="media-item" src="Picture/711630495_1009381895174020_4216243471468663068_n.jpg" alt="ผลงานการทำงาน คลองสี่เครน">
+                            <div class="media-overlay">
+                                <div class="media-overlay-content">
+                                    <h4>บริการรถเครน คลองสี่เครน</h4>
+                                    <p><i class="fa-solid fa-location-dot"></i> ปทุมธานีและกรุงเทพฯ | คลิกชมรูปภาพบน Facebook</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- สไลด์ 7: ภาพใน Picture 6 -->
+                    <div class="media-wrapper">
+                        <a href="https://www.facebook.com/share/18meTK2SGe/" target="_blank" title="คลิกเพื่อดูรูปภาพเพิ่มเติมบน Facebook">
+                            <img class="media-item" src="Picture/712429303_1009381848507358_9042873767683163226_n.jpg" alt="ผลงานการทำงาน คลองสี่เครน">
+                            <div class="media-overlay">
+                                <div class="media-overlay-content">
+                                    <h4>บริการรถเครน คลองสี่เครน</h4>
+                                    <p><i class="fa-solid fa-location-dot"></i> ปทุมธานีและกรุงเทพฯ | คลิกชมรูปภาพบน Facebook</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- สไลด์ 8: ภาพใน Picture 7 -->
+                    <div class="media-wrapper">
+                        <a href="https://www.facebook.com/share/18meTK2SGe/" target="_blank" title="คลิกเพื่อดูรูปภาพเพิ่มเติมบน Facebook">
+                            <img class="media-item" src="Picture/712743920_1012373018208241_2674779849386734523_n.jpg" alt="ผลงานการทำงาน คลองสี่เครน">
+                            <div class="media-overlay">
+                                <div class="media-overlay-content">
+                                    <h4>บริการรถเครน คลองสี่เครน</h4>
+                                    <p><i class="fa-solid fa-location-dot"></i> ปทุมธานีและกรุงเทพฯ | คลิกชมรูปภาพบน Facebook</p>
+                                </div>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <!-- ภาพผลงาน 2 -->
-            <div class="media-wrapper reveal">
-                <img class="media-item" src="crane2.png" alt="การทำงานของรถเครนคลองสี่เครน ณ ไซต์งานก่อสร้าง">
-                <div class="media-overlay">
-                    <div class="media-overlay-content">
-                        <h4>งานติดตั้งแผ่นพื้นสำเร็จรูป</h4>
-                        <p>รวดเร็ว ปลอดภัย ได้ระนาบที่ตรงเป๊ะ</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- วิดีโอผลงาน -->
-            <div class="media-wrapper video-wrapper reveal">
-                <video class="video-item" controls poster="Logo.jpg">
-                    <source src="your-video-file.mp4" type="video/mp4">
-                    เบราว์เซอร์ของคุณไม่รองรับการแสดงผลวิดีโอ
-                </video>
-            </div>
+            <!-- จุดนำทางด้านล่าง (Dots Indicators) -->
+            <div class="slider-dots" id="sliderDots"></div>
         </div>
     </section>
 
@@ -1719,6 +1919,9 @@
 
             // ดึงข้อมูลคิวงานมาแสดงผล (เฉพาะข้อมูลทั่วไปแบบไม่มีข้อมูลส่วนบุคคล)
             fetchMainBookings();
+
+            // เริ่มต้นระบบรูปภาพสไลด์อัตโนมัติ
+            initMediaSlider();
         });
 
         // 3. ดึงข้อมูลคิวงานอัปเดตเรียลไทม์จาก Google Sheets มาแสดงผลในตาราง (กรองข้อมูล PDPA บน Server)
@@ -1800,6 +2003,143 @@
                     <td style="color: #ef4444; font-weight:600;"><i class="fa-solid fa-user-lock"></i> จองแล้ว</td>
                 `;
                 tableBody.appendChild(tr);
+            });
+        }
+
+        // 5. ระบบแกลลอรี่ภาพสไลด์อัตโนมัติ (Works Carousel Slider)
+        function initMediaSlider() {
+            const track = document.getElementById('sliderTrack');
+            if (!track) return;
+            const cards = track.querySelectorAll('.media-wrapper');
+            const dotsContainer = document.getElementById('sliderDots');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            let currentIndex = 0;
+            let autoPlayInterval;
+
+            function getItemsVisible() {
+                if (window.innerWidth > 991) return 3;
+                if (window.innerWidth > 576) return 2;
+                return 1;
+            }
+
+            function updateSlider() {
+                const visibleCount = getItemsVisible();
+                const maxIndex = cards.length - visibleCount;
+                if (currentIndex > maxIndex) currentIndex = maxIndex;
+                if (currentIndex < 0) currentIndex = 0;
+
+                const card = cards[0];
+                if (card) {
+                    const cardWidth = card.getBoundingClientRect().width;
+                    const gap = 20; // gap in px
+                    const offset = currentIndex * (cardWidth + gap);
+                    track.style.transform = `translateX(-${offset}px)`;
+                }
+
+                updateDots(maxIndex);
+            }
+
+            function updateDots(maxIndex) {
+                if (!dotsContainer) return;
+                dotsContainer.innerHTML = '';
+                for (let i = 0; i <= maxIndex; i++) {
+                    const dot = document.createElement('div');
+                    dot.classList.add('slider-dot');
+                    if (i === currentIndex) dot.classList.add('active');
+                    dot.addEventListener('click', () => {
+                        currentIndex = i;
+                        updateSlider();
+                        resetAutoPlay();
+                    });
+                    dotsContainer.appendChild(dot);
+                }
+            }
+
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    const visibleCount = getItemsVisible();
+                    const maxIndex = cards.length - visibleCount;
+                    if (currentIndex === 0) {
+                        currentIndex = maxIndex;
+                    } else {
+                        currentIndex--;
+                    }
+                    updateSlider();
+                    resetAutoPlay();
+                });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    const visibleCount = getItemsVisible();
+                    const maxIndex = cards.length - visibleCount;
+                    if (currentIndex >= maxIndex) {
+                        currentIndex = 0;
+                    } else {
+                        currentIndex++;
+                    }
+                    updateSlider();
+                    resetAutoPlay();
+                });
+            }
+
+            function startAutoPlay() {
+                autoPlayInterval = setInterval(() => {
+                    const visibleCount = getItemsVisible();
+                    const maxIndex = cards.length - visibleCount;
+                    if (currentIndex >= maxIndex) {
+                        currentIndex = 0;
+                    } else {
+                        currentIndex++;
+                    }
+                    updateSlider();
+                }, 3000);
+            }
+
+            function resetAutoPlay() {
+                clearInterval(autoPlayInterval);
+                startAutoPlay();
+            }
+
+            const sliderContainer = document.querySelector('.slider-container');
+            if (sliderContainer) {
+                sliderContainer.addEventListener('mouseenter', () => clearInterval(autoPlayInterval));
+                sliderContainer.addEventListener('mouseleave', startAutoPlay);
+            }
+
+            window.addEventListener('resize', () => {
+                updateSlider();
+            });
+
+            // Run first update
+            setTimeout(updateSlider, 200); // tiny delay to let CSS load and compute widths correctly
+            startAutoPlay();
+        }
+
+        // 4. ระบบจองคิวโทรด่วน: ขยาย/ยุบเมื่อกดบนอุปกรณ์มือถือ (เพื่อไม่ให้บดบังเนื้อหาขณะเลื่อน)
+        const quickCallBtn = document.getElementById('quickCall');
+        if (quickCallBtn) {
+            quickCallBtn.addEventListener('click', function(e) {
+                // สำหรับหน้าจออุปกรณ์มือถือ (กว้างไม่เกิน 768px)
+                if (window.innerWidth <= 768) {
+                    if (!quickCallBtn.classList.contains('expanded')) {
+                        e.preventDefault(); // ป้องกันการเริ่มโทรทันทีในครั้งแรกที่กด เพื่อให้ผู้ใช้เห็นเบอร์ก่อน
+                        quickCallBtn.classList.add('expanded');
+                        
+                        // ปิดเมนูออโต้ยุบกลับหลังจากไม่มีกิจกรรม 5 วินาที
+                        setTimeout(() => {
+                            quickCallBtn.classList.remove('expanded');
+                        }, 5000);
+                    }
+                }
+            });
+
+            // ยุบตัวกลับเมื่อผู้ใช้แตะหรือคลิกบริเวณอื่นของหน้าจอ
+            document.addEventListener('click', function(e) {
+                if (!quickCallBtn.contains(e.target)) {
+                    quickCallBtn.classList.remove('expanded');
+                }
             });
         }
 

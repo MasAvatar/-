@@ -8,16 +8,28 @@ function doGet(e) {
   var bookings = [];
   var timezone = SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone();
   
+  // ตรวจสอบพารามิเตอร์ public เพื่อกรองข้อมูลส่วนบุคคล (PDPA Compliance)
+  var isPublic = false;
+  if (e && e.parameter && e.parameter.public === 'true') {
+    isPublic = true;
+  }
+  
   // เริ่มจากแถวที่ 2 (ดัชนี 1) ข้ามหัวตาราง
   for (var i = 1; i < data.length; i++) {
     var row = data[i];
     if (row[0]) { // ตรวจสอบว่าวันที่ไม่ว่าง
-      bookings.push({
+      var booking = {
         date: normalizeDate(row[0], timezone),
-        crane: String(row[1] || '').trim(),
-        address: String(row[2] || ''),
-        phone: String(row[3] || '')
-      });
+        crane: String(row[1] || '').trim()
+      };
+      
+      // ส่งข้อมูลที่อยู่และเบอร์ติดต่อเฉพาะกรณีที่ไม่ได้ร้องขอแบบสาธารณะ
+      if (!isPublic) {
+        booking.address = String(row[2] || '');
+        booking.phone = String(row[3] || '');
+      }
+      
+      bookings.push(booking);
     }
   }
   

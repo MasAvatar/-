@@ -785,17 +785,19 @@
             
             <div id="lockError" class="lock-error-msg">❌ รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง</div>
             
-            <input type="password" id="passcodeInput" class="lock-input" placeholder="กรอกรหัสผ่านเข้าใช้งาน" onkeydown="if(event.key === 'Enter') unlockPage()">
-            <button class="lock-btn" onclick="unlockPage()">
-                <i class="fa-solid fa-unlock-keyhole"></i> เข้าสู่ระบบ
-            </button>
+            <form onsubmit="event.preventDefault(); unlockPage();" style="width: 100%;">
+                <input type="password" id="passcodeInput" class="lock-input" placeholder="กรอกรหัสผ่านเข้าใช้งาน">
+                <button type="submit" class="lock-btn">
+                    <i class="fa-solid fa-unlock-keyhole"></i> เข้าสู่ระบบ
+                </button>
+            </form>
         </div>
     </div>
 
     <!-- Header -->
     <header>
         <div class="logo-container">
-            <img src="Logo.jpg" alt="คลองสี่เครน โลโก้">
+            <img src="Picture/Logo.jpg" alt="คลองสี่เครน โลโก้">
             <div class="logo-text">
                 <h2>คลองสี่เครน</h2>
                 <span>ระบบบริหารคิวรถเครน</span>
