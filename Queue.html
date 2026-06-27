@@ -826,7 +826,7 @@
                 
                 <!-- Date Picker -->
                 <div class="form-group">
-                    <label for="bookingDate" class="form-label">เลือกวันที่รับงาน (ห้ามจองรถขนาดเดียวกันชนกัน)</label>
+                    <label for="bookingDate" class="form-label">เลือกวันที่รับงาน (16 ตัน จองได้สูงสุด 2 คัน/วัน, 25 ตัน 1 คัน/วัน)</label>
                     <input type="date" id="bookingDate" required class="form-input" onchange="checkBookingConflict()">
                 </div>
 
@@ -1248,6 +1248,7 @@
         }
 
         // Realtime Client-side overlap conflict check
+        // 16 ตัน: จองได้สูงสุด 2 คัน/วัน, 25 ตัน: จองได้สูงสุด 1 คัน/วัน
         function checkBookingConflict() {
             const chosenDate = document.getElementById('bookingDate').value;
             const chosenCrane = document.querySelector('input[name="craneSize"]:checked').value;
@@ -1255,11 +1256,17 @@
 
             if (!chosenDate) return;
 
-            // Check if there is an overlap (เปรียบเทียบจาก isoDate ที่แปลงเป็น YYYY-MM-DD เรียบร้อยแล้ว)
-            const conflict = bookingsList.find(b => b.isoDate === chosenDate && b.crane === chosenCrane);
+            // นับจำนวนการจองที่มีอยู่แล้วสำหรับวันที่และขนาดรถที่เลือก
+            const existingCount = bookingsList.filter(b => b.isoDate === chosenDate && b.crane === chosenCrane).length;
 
-            if (conflict) {
-                showAlert('danger', `⚠️ คิวชนกัน! รถเครนขนาด ${chosenCrane} มีการจองคิวแล้วในวันที่ ${chosenDate} กรุณาเลือกวันที่อื่นหรือขนาดอื่น`, 'fa-triangle-exclamation');
+            // กำหนดจำนวนสูงสุดต่อวันตามขนาดรถ
+            const maxPerDay = chosenCrane === '16 ตัน' ? 2 : 1;
+
+            if (existingCount >= maxPerDay) {
+                const msg = chosenCrane === '16 ตัน'
+                    ? `⚠️ คิวเต็ม! รถเครนขนาด 16 ตัน มีการจองครบ 2 คันแล้วในวันที่ ${chosenDate} กรุณาเลือกวันที่อื่นหรือขนาดอื่น`
+                    : `⚠️ คิวชนกัน! รถเครนขนาด 25 ตัน มีการจองคิวแล้วในวันที่ ${chosenDate} กรุณาเลือกวันที่อื่นหรือขนาดอื่น`;
+                showAlert('danger', msg, 'fa-triangle-exclamation');
                 submitBtn.disabled = true;
                 return true;
             } else {

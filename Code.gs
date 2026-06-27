@@ -100,19 +100,25 @@ function doPost(e) {
       var phoneVal = data.phone || '';
       
       var values = sheet.getDataRange().getValues();
-      var conflict = false;
+      // นับจำนวนการจองที่มีอยู่แล้วสำหรับวันที่และขนาดรถเดียวกัน
+      var existingCount = 0;
       for (var i = 1; i < values.length; i++) {
         var row = values[i];
         var rowDate = normalizeDate(row[0], timezone);
         
         if (rowDate === dateVal && String(row[1]).trim() === craneVal) {
-          conflict = true;
-          break;
+          existingCount++;
         }
       }
       
-      if (conflict) {
-        response = { success: false, message: "ขออภัย! วันที่และขนาดรถเครนนี้มีการจองไว้ก่อนแล้วในระบบ" };
+      // กำหนดจำนวนสูงสุดต่อวัน: 16 ตัน = 2 คัน, 25 ตัน = 1 คัน
+      var maxPerDay = (craneVal === '16 ตัน') ? 2 : 1;
+      
+      if (existingCount >= maxPerDay) {
+        var conflictMsg = (craneVal === '16 ตัน')
+          ? "ขออภัย! รถเครน 16 ตัน มีการจองครบ 2 คันแล้วในวันที่ " + dateVal
+          : "ขออภัย! วันที่และขนาดรถเครนนี้มีการจองไว้ก่อนแล้วในระบบ";
+        response = { success: false, message: conflictMsg };
       } else {
         sheet.appendRow([dateVal, craneVal, addressVal, phoneVal]);
         response = { success: true, message: "บันทึกข้อมูลการจองรถเครนในวันที่ " + dateVal + " เรียบร้อยแล้ว!" };
